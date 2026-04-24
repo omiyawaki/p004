@@ -1,11 +1,30 @@
-# Python bytecode / caches
+# macOS / tool noise
+.DS_Store
+._*
+Thumbs.db
+.ipynb_checkpoints/
 __pycache__/
 *.pyc
 *.pyo
 *.swp
-.ipynb_checkpoints/
 
-# Data / figure outputs (keep large products in /project/...)
+# LaTeX build artifacts (regenerable from .tex)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.fff
+*.ttt
+*.soc
+
+# Data artifacts (off-git per binary policy)
 *.nc
 *.nc4
 *.grib
@@ -13,14 +32,24 @@ __pycache__/
 *.zarr/
 *.pkl
 *.pickle
+
+# Figures/outputs (per AGENTS.md: keep large products in /project/... or remote)
 *.pdf
 *.png
 *.jpg
 *.jpeg
 
-# PBS output
+# PBS job output
 *.o[0-9]*
 *.e[0-9]*
 
-# macOS
-.DS_Store
+# Executed notebooks (regenerable)
+*_executed.ipynb
+
+# Bulky / sensitive local mirrors (authoritative sources on CGD ~/scripts/p004/)
+# /meetings/ = 500 MB of PDF slides + notes pairs (mirror of CGD)
+# /literature/ = library of cited-paper PDFs (mirror of CGD, if ever pulled)
+# Leading slash anchors to repo root, so notes/meetings/ (text summaries)
+# still gets tracked.
+/meetings/
+/literature/

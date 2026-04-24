@@ -1,0 +1,577 @@
+%
+% JOURNAL ABBREVIATIONS
+%
+@STRING{AMS 	= "Amer.\ Meteor.\ Soc."}
+@STRING{AGU 	= "Amer.\ Geophys.\ Union"}
+@STRING{AIP 	= "Amer. Inst. Phys."}
+@STRING{ADGEO     = "Adv.\ Geosci."}
+@STRING{AFM       = "Agric.\ For.\ Meteor."}
+@STRING{AM        = "Ann.\ Meteor."}
+@STRING{AN        = "Astrophys.\ Norv."}		% Astrophysica Norvegica
+@STRING{AO        = "Atmos.--Ocean"}			% Atmosphere--Ocean, published by Canadian Meteorological Society (CMOS)
+@STRING{AR        = "Atmos.\ Res."}			% Atmospheric Research
+@STRING{ARFM      = "Annu.\ Rev.\ Fluid Mech."}
+@STRING{AUMET     = "Aust.\ Meteor.\ Mag."}
+@STRING{BAMS      = "Bull.\ Amer.\ Meteor.\ Soc."}
+@STRING{CAP       = "Contrib.\ Atmos.\ Phys."}
+@STRING{CC        = "Climate Change"}      % Climate Change 
+@STRING{CCH       = "Climatic Change"}			% Climatic Change
+@STRING{CDYN      = "Climate Dyn."}
+@STRING{CHAOS     = "Chaos"}
+@STRING{COL       = "Collier's"}
+@STRING{CRS       = "Cont.\ Shelf Res."}
+@STRING{DAO       = "Dyn.\ Atmos.\ Oceans"}
+@STRING{ECO       = "Ecology"}
+@STRING{EI        = "Earth Interact."}
+@STRING{GA        = "Geophysica"}			% Geophysica, published by Geophysical Society of Finland 
+@STRING{GEOMAG    = "Geophys.\ Mag."}
+@STRING{GN        = "Geophys.\ Norv."}			% Geophysica Norvegica
+@STRING{GRL       = "Geophys.\ Res.\ Lett."}
+@STRING{GEOINT    = "Geofis.\ Int."}			% Geofisica Internacional (Mexican journal -- vols. 3--5 contained proceedings from a hurricane conference
+@STRING{GEOPUB    = "Geofys.\ Publ."}
+@STRING{GPC       = "Global Planet.\ Change"}
+@STRING{HP        = "Health Phys."}
+@STRING{IAOP      = "Izv.\ Atmos.\ Ocean.\ Phys.\ (Engl.\ Transl.)"}
+@STRING{IJC       = "Int.\ J.\ Climatol."}
+@STRING{JAM       = "J.\ Appl.\ Meteor."}		% renamed to name below in 2006
+@STRING{JAMC      = "J.\ Appl.\ Meteor.\ Climatol."}  	% Journal of Applied Meteorology and Climatology (this journal used to be called the Journal of Applied Meteorology before 2006)
+@STRING{JAS       = "J.\ Atmos.\ Sci."}
+@STRING{JAOT      = "J.\ Atmos.\ Oceanic Technol."}
+@STRING{JCAM      = "J.\ Climate Appl.\ Meteor."}	% from 1983--87, now JAMC
+@STRING{JCLI      = "J.\ Climate"}
+@STRING{JCR       = "J.\ Coastal Res."}
+@STRING{JFM       = "J.\ Fluid\ Mech."}
+@STRING{JEM       = "J.\ Eng.\ Math."}			% Journal of Engineering Mathematics
+@STRING{JGR       = "J.\ Geophys.\ Res."}
+@STRING{JHM       = "J.\ Hydrometeor."}
+@STRING{JMS       = "J.\ Mar.\ Syst."}
+@STRING{JM        = "J.\ Meteor."}
+@STRING{JMR       = "J.\ Mar.\ Res."}
+@STRING{JMSJ      = "J.\ Meteor.\ Soc.\ Japan"}
+@STRING{JPO       = "J.\ Phys.\ Oceanogr."}
+@STRING{JOCEAN    = "J.\ Oceanogr."}			% Journal of Oceanography
+@STRING{JOSJ      = "J.\ Oceanogr.\ Soc.\ Japan"}
+@STRING{JSE       = "J.\ Struct.\ Eng."}	% Journal of Structural Engineering at ASCE
+@STRING{JTM       = "J.\ Tropical Meteor."}
+@STRING{JWEIA     = "J.\ Wind Eng.\ Ind.\ Aerodyn."}
+@STRING{MA        = "Meteor.\ Appl."}
+@STRING{MAP       = "Meteor.\ Atmos.\ Phys."}
+@STRING{METMON    = "Meteor.\ Monogr."}
+@STRING{METZEIT   = "Meteor.\ Z."}
+@STRING{MWL       = "Mar.\ Wea.\ Log"}
+@STRING{MWR       = "Mon.\ Wea.\ Rev."}
+@STRING{NAT       = "Nature"}
+@STRING{NHR       = "Nat.\ Hazards Rev."}
+@STRING{NWD       = "Natl.\ Weather Dig."}
+@STRING{OA        = "Oceanol. Aeta"}
+@STRING{OCEAN     = "Oceanography"}                	% a quarterly journal of The Oceanography Society
+@STRING{PAG       = "Pure Appl.\ Geophys."}
+@STRING{PF        = "Phys.\ Fluids"}
+@STRING{PHYSD     = "Physica D"}
+@STRING{PMG       = "Pap.\ Meteor.\ Geophys."}	% Papers in Meteorology and Geophysics
+@STRING{PNAS      = "Proc.\ Natl.\ Acad.\ Sci.\ (USA)"}
+@STRING{PRE       = "Phys.\ Rev.\ E"}
+@STRING{PRSA      = "Proc.\ Roy.\ Soc."}
+@STRING{PT        = "Phys.\ Today"}
+@STRING{PTRS      = "Philos.\ Trans.\ Roy.\ Soc.\ London"}
+@STRING{QJRMS     = "Quart.\ J.\ Roy.\ Meteor.\ Soc."}
+@STRING{RGEO      = "Rev. Geophys."}
+@STRING{SCI       = "Science"}
+@STRING{SOLA      = "SOLA"}				% Scientific Online Letters on the Atmosphere
+@STRING{TAGU      = "Eos, Trans.\ Amer.\ Geophys.\ Union"}
+@STRING{TELLUS    = "Tellus"}
+@STRING{TCFD      = "Theor.\ Comput.\ Fluid Dyn."}
+@STRING{WEA       = "Weather"}
+@STRING{WW        = "Weatherwise"}
+@STRING{WF        = "Wea.\ Forecasting"}
+@STRING{WMOB      = "WMO Bull."}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Bieli2015-vx,
+  title     = "A Lagrangian investigation of hot and cold temperature extremes
+               in Europe",
+  author    = "Bieli, Melanie and Pfahl, Stephan and Wernli, Heini",
+  abstract  = "Since temperature extremes have a strong impact on environment
+               and society, it is crucial to understand their underlying
+               mechanisms. While their relationship to the large‐scale
+               atmospheric circulation has been comprehensively investigated,
+               the role of physical processes in the formation of air masses
+               with extreme temperatures is less well understood. This study
+               presents a Lagrangian analysis of the 0.1\% most extreme
+               six‐hourly hot and cold events in three European regions (UK,
+               Central Europe, Balkans) for the time period 1989--2009. The
+               results provide insight into typical transport patterns and
+               physical processes (adiabatic compression, radiation, surface
+               heat fluxes) occurring along the trajectories of extreme
+               temperature air masses. Cold events in Europe are most
+               frequently induced by advection of cold air masses from the
+               Arctic and Russia. The transport to the target region is
+               characterized by a temperature increase caused by adiabatic
+               compression and, in the maritime setting of the UK, also by
+               diabatic heating due to surface sensible heat fluxes. Despite
+               the warming along the trajectories, the extremeness of the
+               associated 2 m temperature increases, due to the dislocation of
+               the air mass to regions with a milder climate. Hot events are
+               generally associated with weaker horizontal transport, but
+               strong adiabatic warming and local temperature increase caused
+               by enhanced radiation and surface heat fluxes. This in situ
+               warming is particularly strong in Central Europe. Evaluating the
+               temperature evolution along the trajectories reveals that hot
+               and cold extremes develop on a similar time‐scale of 2--3 days.
+               This time‐scale is mostly set by physical processes for hot
+               extremes and controlled by advective transport for cold
+               extremes. The diagnostics applied in this study lead to an
+               improved process understanding that can provide a basis for more
+               accurate predictions of temperature extremes.",
+  journal   = "Quart. J. Roy. Meteor. Soc.",
+  publisher = "Wiley",
+  volume    =  141,
+  number    =  686,
+  pages     = "98--108",
+  month     =  jan,
+  year      =  2015,
+  copyright = "http://onlinelibrary.wiley.com/termsAndConditions\#vor",
+  language  = "en"
+}
+
+
+@ARTICLE{Cohen1991-he,
+  title       = "The Effect of Snow Cover on the Climate",
+  author      = "Cohen, Judah and Rind, David",
+  abstract    = "Abstract Large-scale snow cover anomalies are thought to cause
+                 significant changes in the diabatic heating of the earth's
+                 surface in such a way as to produce substantial local cooling
+                 in the surface temperatures. This theory was tested using the
+                 GISS 3-D GCM (General Circulation Model). The results of the
+                 GCM experiment showed that snow cover caused only a short term
+                 local decrease in the surface temperature. In the surface
+                 energy budget, reduction in absorbed shortwave radiation and
+                 the increased latent heat sink of melting snow contributed to
+                 lower temperatures. However, all the remaining heating terms
+                 contribute to increasing the net heating over a snow covered
+                 surface. The results emphasize the negative feedback which
+                 limits the impact of snow cover anomalies over longer time
+                 scales.",
+  journal     = "J. Clim.",
+  publisher   = "American Meteorological Society",
+  volume      =  4,
+  number      =  7,
+  pages       = "689--706",
+  month       =  jul,
+  year        =  1991,
+  language    = "en",
+  original_id = "37845fc1-d7c6-08eb-a929-8ef759b5f465"
+}
+
+
+@ARTICLE{Garfinkel2017-fp,
+  title       = "The {Non-Gaussianity} and Spatial Asymmetry of Temperature
+                 Extremes Relative to the Storm Track: The Role of Horizontal
+                 Advection",
+  author      = "Garfinkel, Chaim I and Harnik, Nili",
+  abstract    = "Abstract The distribution of near-surface and tropospheric
+                 temperature variability in midlatitudes is distinguishable
+                 from a Gaussian in meteorological reanalysis data; consistent
+                 with this, warm extremes occur preferentially poleward of the
+                 location of cold extremes. To understand the factors that
+                 drive this non-Gaussianity, a dry general circulation model
+                 and a simple model of Lagrangian temperature advection are
+                 used to investigate the connections between dynamical
+                 processes and the occurrence of extreme temperature events
+                 near the surface. The non-Gaussianity evident in reanalysis
+                 data is evident in the dry model experiments, and the location
+                 of extremes is influenced by the location of the jet stream
+                 and storm track. The cause of this in the model can be traced
+                 back to the synoptic evolution within the storm track leading
+                 up to cold and warm extreme events: negative temperature
+                 extremes occur when an equatorward propagating high--low
+                 couplet (high to the west) strongly advects isotherms
+                 equatorward over a large meridional fetch over more than two
+                 days. Positive temperature anomalies occur when a poleward
+                 propagating low--high couplet (low to the west) advects
+                 isotherms poleward over a large meridional fetch over more
+                 than two days. The magnitude of the extremes is enhanced by
+                 the meridional movement of the systems. Overall, horizontal
+                 temperature advection by storm track systems can account for
+                 the warm/cold asymmetry in the latitudinal distribution of the
+                 temperature extremes.",
+  journal     = "J. Clim.",
+  publisher   = "American Meteorological Society",
+  volume      =  30,
+  number      =  2,
+  pages       = "445--464",
+  month       =  jan,
+  year        =  2017,
+  language    = "en",
+  original_id = "318033ca-22b0-085e-a39c-313ce59361c3"
+}
+
+
+@ARTICLE{Gross2020-bh,
+  title       = "Amplified warming of seasonal cold extremes relative to the
+                 mean in the Northern Hemisphere extratropics",
+  author      = "Gross, Mia H and Donat, Markus G and Alexander, Lisa V and
+                 Sherwood, Steven C",
+  abstract    = "Abstract. Cold extremes are anticipated to warm at a faster
+                 rate than both hot extremes and average temperatures for much
+                 of the Northern Hemisphere. Anomalously warm cold extremes can
+                 affect numerous sectors, including human health, tourism and
+                 various ecosystems that are sensitive to cold temperatures.
+                 Using a selection of global climate models, this paper
+                 explores the accelerated warming of seasonal cold extremes
+                 relative to seasonal mean temperatures in the Northern
+                 Hemisphere extratropics. The potential driving physical
+                 mechanisms are investigated by assessing conditions on or
+                 prior to the day when the cold extreme occurs to understand
+                 how the different environmental fields are related. During
+                 winter, North America, Europe and much of Eurasia show
+                 amplified warming of cold extremes projected for the late 21st
+                 century, compared to the mid-20th century. This is shown to be
+                 largely driven by reductions in cold air temperature
+                 advection, suggested as a likely consequence of Arctic
+                 amplification. In spring and autumn, cold extremes are
+                 expected to warm faster than average temperatures for most of
+                 the Northern Hemisphere mid-latitudes to high latitudes,
+                 particularly Alaska, northern Canada and northern Eurasia. In
+                 the shoulder seasons, projected decreases in snow cover and
+                 associated reductions in surface albedo are suggested as the
+                 largest contributor affecting the accelerated rates of warming
+                 in cold extremes. The key findings of this study improve our
+                 understanding of the environmental conditions that contribute
+                 to the accelerated warming of cold extremes relative to mean
+                 temperatures.",
+  journal     = "Earth Syst. Dyn.",
+  publisher   = "Copernicus GmbH",
+  volume      =  11,
+  number      =  1,
+  pages       = "97--111",
+  month       =  feb,
+  year        =  2020,
+  language    = "en",
+  original_id = "43e6562c-fd4a-0f30-9e3d-e580b00679a1"
+}
+
+
+@ARTICLE{Holmes2016-ri,
+  title       = "Robust Future Changes in Temperature Variability under
+                 Greenhouse Gas Forcing and the Relationship with Thermal
+                 Advection",
+  author      = "Holmes, Caroline R and Woollings, Tim and Hawkins, Ed and de
+                 Vries, Hylke",
+  abstract    = "Abstract Recent temperature extremes have highlighted the
+                 importance of assessing projected changes in the variability
+                 of temperature as well as the mean. A large fraction of
+                 present-day temperature variance is associated with thermal
+                 advection, as anomalous winds blow across the land--sea
+                 temperature contrast, for instance. Models project robust
+                 heterogeneity in the twenty-first-century warming pattern
+                 under greenhouse gas forcing, resulting in land--sea
+                 temperature contrasts increasing in summer and decreasing in
+                 winter and the pole-to-equator temperature gradient weakening
+                 in winter. In this study, future changes in monthly
+                 variability of near-surface temperature in the 17-member
+                 ensemble ESSENCE (Ensemble Simulations of Extreme Weather
+                 Events under Nonlinear Climate Change) are assessed. In
+                 winter, variability in midlatitudes decreases whereas in very
+                 high latitudes and the tropics it increases. In summer,
+                 variability increases over most land areas and in the tropics,
+                 with decreasing variability in high latitude oceans. Multiple
+                 regression analysis is used to determine the contributions to
+                 variability changes from changing temperature gradients and
+                 circulation patterns. Thermal advection is found to be of
+                 particular importance in the Northern Hemisphere winter
+                 midlatitudes, where the change in mean state temperature
+                 gradients alone could account for over half the projected
+                 changes. Changes in thermal advection are also found to be
+                 important in summer in Europe and coastal areas, although less
+                 so than in winter. Comparison with CMIP5 data shows that the
+                 midlatitude changes in variability are robust across large
+                 regions, particularly high northern latitudes in winter and
+                 middle northern latitudes in summer.",
+  journal     = "J. Clim.",
+  publisher   = "American Meteorological Society",
+  volume      =  29,
+  number      =  6,
+  pages       = "2221--2236",
+  month       =  mar,
+  year        =  2016,
+  language    = "en",
+  original_id = "60ad2dc7-b9e5-039d-b7ab-73f5f0a4b822"
+}
+
+
+@ARTICLE{Huybers2014-hl,
+  title       = "{U.S}. daily temperatures: The meaning of extremes in the
+                 context of nonnormality",
+  author      = "Huybers, P and McKinnon, K A and Rhines, A and Tingley, M",
+  abstract    = "Abstract Variations in extreme daily temperatures are explored
+                 in relation to changes in seasonal mean temperature using 1218
+                 high-quality U.S. temperature stations spanning 1900--2012.
+                 Extreme temperatures are amplified (or damped) by as much as
+                 $\pm$50\% relative to changes in average temperature,
+                 depending on region, season, and whether daily minimum or
+                 maximum temperature is analyzed. The majority of this regional
+                 structure in amplification is shown to follow from regional
+                 variations in temperature distributions. More specifically,
+                 there exists a close relationship between departures from
+                 normality and the degree to which extreme changes are
+                 amplified relative to the mean. To distinguish between
+                 intraseasonal and interannual contributions to nonnormality
+                 and amplification, an additional procedure, referred to as z
+                 bootstrapping, is introduced that controls for changes in the
+                 mean and variance between years. Application of z
+                 bootstrapping indicates that amplification of winter extreme
+                 variations is generally consistent with nonnormal
+                 intraseasonal variability. Summer variability, in contrast,
+                 shows interannual variations in the spread of the temperature
+                 distribution related to changes in the mean, especially in the
+                 Midwest. Changes in midwestern temperature variability are
+                 qualitatively consistent with those expected from decreases in
+                 evapotranspiration and are strongly correlated with a measure
+                 of drought intensity. The identified patterns of interannual
+                 variations in means and extremes may serve as an analog for
+                 modes of variability that can be expected at longer time
+                 scales.",
+  journal     = "J. Clim.",
+  publisher   = "American Meteorological Society",
+  volume      =  27,
+  number      =  19,
+  pages       = "7368--7384",
+  month       =  oct,
+  year        =  2014,
+  language    = "en",
+  original_id = "7769dbed-f415-4753-9a7b-7796b627a15b"
+}
+
+
+@ARTICLE{Linz2020-ds,
+  title     = "A framework for understanding how dynamics shape temperature
+               distributions",
+  author    = "Linz, Marianna and Chen, Gang and Zhang, Boer and Zhang, Pengfei",
+  abstract  = "Abstract Understanding what physically sets the shape of
+               temperature distributions will enable more robust predictions of
+               local temperature with global warming. We derive the
+               relationship between the temperature distribution shape and the
+               advection of temperature conditionally averaged at each
+               temperature percentile. This enables quantification of the shift
+               of each percentile that is due to changes in the mean
+               temperature, in horizontal temperature advection, and other
+               processes (e.g., radiation and convection). We use this
+               relationship to examine global model simulations in an idealized
+               aquaplanet model with increasing carbon dioxide. Changes in the
+               distribution with doubling and quadrupling of carbon dioxide are
+               significant, and they are caused by different processes. We find
+               that midlatitude temperature distributions can be explained
+               mostly by the horizontal advection, except in the upper and
+               lower 10\% of the distribution.",
+  journal   = "Geophys. Res. Lett.",
+  publisher = "American Geophysical Union (AGU)",
+  volume    =  47,
+  number    =  4,
+  pages     = "e2019GL085684",
+  month     =  feb,
+  year      =  2020,
+  copyright = "http://creativecommons.org/licenses/by-nc/4.0/",
+  language  = "en"
+}
+
+
+@ARTICLE{McKinnon2016-qe,
+  title       = "The changing shape of Northern Hemisphere summer temperature
+                 distributions",
+  author      = "McKinnon, Karen A and Rhines, Andrew and Tingley, Martin P and
+                 Huybers, Peter",
+  abstract    = "The occurrence of recent summer temperature extremes in the
+                 midlatitudes has raised questions about whether and how the
+                 distributions of summer temperature are changing. While it is
+                 clear that in most regions the average temperature is
+                 increasing, there is less consensus regarding the presence or
+                 nature of changes in the shape of the distributions, which can
+                 influence the probability of extreme events. Using data from
+                 over 4000 weather stations in the Global Historical
+                 Climatology Network-Daily database, we quantify the changes in
+                 daily maximum and minimum temperature distributions for peak
+                 summer in the Northern Hemisphere midlatitudes during
+                 1980--2015 using quantile regression. A large majority
+                 (87--88\%) of the trends across percentiles and stations can
+                 be explained by a shift of the distributions with no change in
+                 shape. The remaining variability is summarized through
+                 projections onto orthogonal basis functions that are closely
+                 related to changes in variance, skewness, and kurtosis. North
+                 America and Eurasia show significant shifts in the estimated
+                 distributions of daily maximum and minimum temperatures.
+                 Although no general change in summer variance is found,
+                 variance has regionally increased in Eurasia and decreased in
+                 most of North America. Changes in shape that project onto the
+                 skewness and kurtosis basis functions have a much smaller
+                 spatial scale and are generally insignificant.",
+  journal     = "J. Geophys. Res. D: Atmos.",
+  publisher   = "Wiley Online Library",
+  volume      =  121,
+  number      =  15,
+  pages       = "8849--8868",
+  year        =  2016,
+  language    = "en",
+  original_id = "360fb9e8-eda3-0171-a0da-3d40ff096831"
+}
+
+
+@ARTICLE{Schneider2015-ws,
+  title       = "Physics of Changes in Synoptic Midlatitude Temperature
+                 Variability",
+  author      = "Schneider, Tapio and Bischoff, Tobias and P{\l}otka, Hanna",
+  abstract    = "Abstract This paper examines the physical processes
+                 controlling how synoptic midlatitude temperature variability
+                 near the surface changes with climate. Because synoptic
+                 temperature variability is primarily generated by advection,
+                 it can be related to mean potential temperature gradients and
+                 mixing lengths near the surface. Scaling arguments show that
+                 the reduction of meridional potential temperature gradients
+                 that accompanies polar amplification of global warming leads
+                 to a reduction of the synoptic temperature variance near the
+                 surface. This is confirmed in simulations of a wide range of
+                 climates with an idealized GCM. In comprehensive climate
+                 simulations (CMIP5), Arctic amplification of global warming
+                 similarly entails a large-scale reduction of the near-surface
+                 temperature variance in Northern Hemisphere midlatitudes,
+                 especially in winter. The probability density functions of
+                 synoptic near-surface temperature variations in midlatitudes
+                 are statistically indistinguishable from Gaussian, both in
+                 reanalysis data and in a range of climates simulated with
+                 idealized and comprehensive GCMs. This indicates that changes
+                 in mean values and variances suffice to account for changes
+                 even in extreme synoptic temperature variations. Taken
+                 together, the results indicate that Arctic amplification of
+                 global warming leads to even less frequent cold outbreaks in
+                 Northern Hemisphere winter than a shift toward a warmer mean
+                 climate implies by itself.",
+  journal     = "J. Clim.",
+  publisher   = "American Meteorological Society",
+  volume      =  28,
+  number      =  6,
+  pages       = "2312--2331",
+  month       =  mar,
+  year        =  2015,
+  language    = "en",
+  original_id = "c1bc4993-dd45-0534-a8c4-b93fb10d68e5"
+}
+
+
+@ARTICLE{Screen2014-ai,
+  title       = "Arctic amplification decreases temperature variance in
+                 northern mid- to high-latitudes",
+  author      = "Screen, James A",
+  abstract    = "Arctic amplification is thought to be altering the polar jet
+                 stream and increasing Northern Hemisphere mid-latitude
+                 temperature variability. This study investigates cold extremes
+                 in the mid-latitudes and shows that subseasonal cold-season
+                 variability has significantly decreased in recent decades. The
+                 reduction in variability is partly due to more rapid warming
+                 of northerly winds and associated cold days, relative to
+                 southerly winds and warm days.",
+  journal     = "Nat. Clim. Chang.",
+  volume      =  4,
+  number      =  7,
+  pages       = "577--582",
+  month       =  jul,
+  year        =  2014,
+  language    = "en",
+  original_id = "01e1f7df-6cc8-076b-9714-3492daa22d19"
+}
+
+
+@ARTICLE{Screen2015-ja,
+  title     = "Reduced Risk of North American Cold Extremes due to Continued
+               Arctic Sea Ice Loss",
+  author    = "Screen, James A and Deser, Clara and Sun, Lantao",
+  abstract  = "Abstract In early January 2014, an Arctic air outbreak brought
+               extreme cold and heavy snowfall to central and eastern North
+               America, causing widespread disruption and monetary losses. The
+               media extensively reported the cold snap, including debate on
+               whether human-induced climate change was partly responsible.
+               Related to this, one particular hypothesis garnered considerable
+               attention: that rapid Arctic sea ice loss may be increasing the
+               risk of cold extremes in the midlatitudes. Here we use large
+               ensembles of model simulations to explore how the risk of North
+               American daily cold extremes is anticipated to change in the
+               future, in response to increases in greenhouse gases and the
+               component of that response solely due to Arctic sea ice loss.
+               Specifically, we examine the changing probability of daily cold
+               extremes as (un)common as the 7 January 2014 event. Projected
+               increases in greenhouse gases decrease the likelihood of North
+               American cold extremes in the future. Days as cold or colder
+               than 7 January 2014 are still projected to occur in the
+               mid-twenty-first century (2030--49), albeit less frequently than
+               in the late twentieth century (1980--99). However, such events
+               will cease to occur by the late twenty-first century (2080--99),
+               assuming greenhouse gas emissions continue unabated. Continued
+               Arctic sea ice loss is a major driver of decreased---not
+               increased---North America cold extremes. Projected Arctic sea
+               ice loss alone reduces the odds of such an event by one-quarter
+               to one-third by the mid-twenty-first century, and to zero (or
+               near zero) by the late twenty-first century.",
+  journal   = "Bull. Am. Meteorol. Soc.",
+  publisher = "American Meteorological Society",
+  volume    =  96,
+  number    =  9,
+  pages     = "1489--1503",
+  month     =  sep,
+  year      =  2015,
+  language  = "en"
+}
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Zhang2022-jw,
+  title       = "Interpreting Observed Temperature Probability Distributions
+                 Using a Relationship between Temperature and Temperature
+                 Advection",
+  author      = "Zhang, Boer and Linz, Marianna and Chen, Gang",
+  abstract    = "Abstract The nonnormality of temperature probability
+                 distributions and the physics that drive it are important due
+                 to their relationships to the frequency of extreme warm and
+                 cold events. Here we use a conditional mean framework to
+                 explore how horizontal temperature advection and other
+                 physical processes work together to control the shape of daily
+                 temperature distributions during 1979--2019 in the ERA5
+                 dataset for both JJA and DJF. We demonstrate that the
+                 temperature distribution in the middle and high latitudes can
+                 largely be linearly explained by the conditional mean
+                 horizontal temperature advection with the simple treatment of
+                 other processes as a Newtonian relaxation with a spatially
+                 variant relaxation time scale and equilibrium temperature. We
+                 analyze the role of different transient and stationary
+                 components of the horizontal temperature advection in
+                 affecting the shape of temperature distributions. The
+                 anomalous advection of the stationary temperature gradient has
+                 a dominant effect in influencing temperature variance, while
+                 both that term and the covariance between anomalous wind and
+                 anomalous temperature have significant effects on temperature
+                 skewness. While this simple method works well over most of the
+                 ocean, the advection--temperature relationship is more
+                 complicated over land. We classify land regions with different
+                 advection--temperature relationships under our framework, and
+                 find that for both seasons the aforementioned linear
+                 relationship can explain ∼30\% of land area, and can explain
+                 either the lower or the upper half of temperature
+                 distributions in an additional ∼30\% of land area. Identifying
+                 the regions where temperature advection explains shapes of
+                 temperature distributions well will help us gain more
+                 confidence in understanding the future change of temperature
+                 distributions and extreme events.",
+  journal     = "J. Clim.",
+  publisher   = "American Meteorological Society",
+  volume      =  35,
+  number      =  2,
+  pages       = "705--724",
+  month       =  jan,
+  year        =  2022,
+  language    = "en",
+  original_id = "556e1735-5e59-0515-9295-c8bb07410ac6"
+}
+
