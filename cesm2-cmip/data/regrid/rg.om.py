@@ -19,20 +19,18 @@ lvn=['advtsurf'] # input1
 ty='2d'
 checkexist=False
 
-fo = 'historical' # forcing (e.g., ssp245)
+# fo = 'historical' # forcing (e.g., ssp245)
 # byr=[1980,2000]
-byr=[1950,1980]
 
-# fo = 'ssp370' # forcing (e.g., ssp245)
-# # byr='gwl2.0'
-# # dyr=10
-# byr=[2070,2100]
+fo = 'ssp370' # forcing (e.g., ssp245)
+byr='gwl2.0'
+dyr=10
 
 freq='day'
 se='sc'
 
 # load ocean indices
-_,omi=pickle.load(open('/project/amp/miyawaki/data/share/lomask/cesm2/lomi.pickle','rb'))
+lmi,_=pickle.load(open('/project/amp/miyawaki/data/share/lomask/cesm2/lomi.pickle','rb'))
 
 md='CESM2'
 
@@ -52,11 +50,11 @@ for varn in lvn:
 
     if checkexist:
         if 'gwl' in byr:
-            if os.path.isfile('%s/lm.%s_%s.%s.nc' % (odir,vn,byr,se)):
+            if os.path.isfile('%s/om.%s_%s.%s.nc' % (odir,vn,byr,se)):
                 print('Output file already exists, skipping...')
                 continue
         else:
-            if os.path.isfile('%s/lm.%s_%g-%g.%s.nc' % (odir,vn,byr[0],byr[1],se)):
+            if os.path.isfile('%s/om.%s_%g-%g.%s.nc' % (odir,vn,byr[0],byr[1],se)):
                 print('Output file already exists, skipping...')
                 continue
 
@@ -102,13 +100,13 @@ for varn in lvn:
     time=vn['time']
     vn=vn.data
     vn=np.reshape(vn,(vn.shape[0],vn.shape[1]*vn.shape[2]))
-    vn=np.delete(vn,omi,axis=1)
+    vn=np.delete(vn,lmi,axis=1)
     ngp=vn.shape[1]
 
     vn=xr.DataArray(vn,coords={'time':time,'gpi':np.arange(ngp)},dims=('time','gpi'))
 
     vn=vn.rename(ovn)
     if 'gwl' in byr:
-        vn.to_netcdf('%s/lm.%s_%s.%s.nc' % (odir,ovn,byr,se),format='NETCDF4')
+        vn.to_netcdf('%s/om.%s_%s.%s.nc' % (odir,ovn,byr,se),format='NETCDF4')
     else:
-        vn.to_netcdf('%s/lm.%s_%g-%g.%s.nc' % (odir,ovn,byr[0],byr[1],se),format='NETCDF4')
+        vn.to_netcdf('%s/om.%s_%g-%g.%s.nc' % (odir,ovn,byr[0],byr[1],se),format='NETCDF4')

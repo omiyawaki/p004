@@ -15,7 +15,9 @@ from scipy.interpolate import interp1d
 
 slev=850 # in hPa
 ivar='gradt'
+ovn='%s%g'%(ivar,slev)
 
+mgen='cmip6'
 fo = 'historical' # forcing (e.g., ssp245)
 # fo = 'ssp370' # forcing (e.g., ssp245)
 
@@ -26,52 +28,54 @@ lmd=mods(fo) # create list of ensemble members
 
 def calc_grad(md):
     ens=emem(md)
-    grd=grid(md)
-    ovn1='%sx%g'%(ivar,slev)
-    ovn2='%sy%g'%(ivar,slev)
+    grd=grid(md,mgen)
 
-    odir1='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,ovn1,md,ens,grd)
-    odir2='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,ovn2,md,ens,grd)
-    if not os.path.exists(odir1):
-        os.makedirs(odir1)
-    if not os.path.exists(odir2):
-        os.makedirs(odir2)
+    odir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s%s' % (fo,freq,ovn,md,ens,grd)
+    if not os.path.exists(odir):
+        os.makedirs(odir)
 
-    idir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,'ta850',md,ens,grd)
+    idir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s%s' % (fo,freq,'ta850',md,ens,grd)
     for _,_,files in os.walk(idir):
         for fn in files:
-            ofn1='%s/%s'%(odir1,fn.replace('ta850',ovn1))
-            ofn2='%s/%s'%(odir2,fn.replace('ta850',ovn2))
-            if checkexist and (os.path.isfile(ofn1) and os.path.isfile(ofn2)):
+            ofn='%s/%s'%(odir,fn.replace('ta850',ovn))
+            if checkexist and os.path.isfile(ofn):
                 continue
 
             fn1='%s/%s'%(idir,fn)
-            ta850=xr.open_dataarray(fn1)
-            time=ta850['time']
+            vn=xr.open_dataarray(fn1)
+            time=vn['time']
+            xlat=vn['lat']
+            xlon=vn['lon']
 
-            lat=np.deg2rad(ta850['lat'].data)
-            lon=np.deg2rad(ta850['lon'].data)
+            lat=np.deg2rad(vn['lat'].data)
+            lon=np.deg2rad(vn['lon'].data)
 
-            # compute t flux divergence
-            gradx=ta850.copy()
-            grady=ta850.copy()
-            ta=ta850.data
+            # compute grad(doy mean(T))
+            lonm=1/2*(lon[1:]+lon[:-1])
+            latm=1/2*(lat[1:]+lat[:-1])
             clat=np.transpose(np.tile(np.cos(lat),(1,1,1)),[0,2,1])
-            cta=clat*ta
+            clatm=np.transpose(np.tile(np.cos(latm),(1,1,1)),[0,2,1])
+            vn=vn.data
             # zonal derivative
-            dlon=lon[1]-lon[0]
-            dx=1/(c.a*clat)*(ta[...,2:]-ta[...,:-2])/(2*dlon)
-            dx=np.concatenate((1/(c.a*clat)*(ta[...,[1]]-ta[...,[-1]])/(2*dlon),dx),axis=-1)
-            dx=np.concatenate((dx,1/(c.a*clat)*(ta[...,[0]]-ta[...,[-2]])/(2*dlon)),axis=-1)
+            vnym=1/2*(vn[:,1:,:]+vn[:,:-1,:]) # meridional midpoints
+            dxm=1/(c.a*clatm)*(vnym[...,1:]-vnym[...,:-1])/(lon[1:]-lon[:-1])
             # meridional divergence
-            dy=1/(c.a*clat[:,1:-1,:])*(cta[:,2:,:]-cta[:,:-2,:])/(lat[2:]-lat[:-2]).reshape([1,len(lat)-2,1])
-            dy=np.concatenate((1/(c.a*clat[:,0,:])*(cta[:,[1],:]-cta[:,[0],:])/(lat[1]-lat[0]),dy),axis=1)
-            dy=np.concatenate((dy,1/(c.a*clat[:,-1,:])*(cta[:,[-1],:]-cta[:,[-2],:])/(lat[-1]-lat[-2])),axis=1)
+            vnxm=1/2*(vn[...,1:]+vn[...,:-1]) # zonal midpoints
+            dym=1/(c.a)*(vnxm[:,1:,:]-vnxm[:,:-1,:])/(lat[1:]-lat[:-1]).reshape([1,len(latm),1])
+            # vnxm=clat*1/2*(vn[...,1:]+vn[...,:-1]) # zonal midpoints
+            # dym=1/(c.a*clatm)*(vnxm[:,1:,:]-vnxm[:,:-1,:])/(lat[1:]-lat[:-1]).reshape([1,len(latm),1])
 
-            gradx.data=dx
-            grady.data=dy
-            gradx.to_netcdf(ofn1,format='NETCDF4')
-            grady.to_netcdf(ofn2,format='NETCDF4')
+            # evaluate at original grid
+            lonmd=np.rad2deg(lonm)
+            latmd=np.rad2deg(latm)
+            dxm=xr.DataArray(dxm,name='dx',coords={'time':time,'lat':latmd,'lon':lonmd},dims=('time','lat','lon'))
+            dym=xr.DataArray(dym,name='dy',coords={'time':time,'lat':latmd,'lon':lonmd},dims=('time','lat','lon'))
+            dx=dxm.interp(lat=xlat,lon=xlon,kwargs={"fill_value": "extrapolate"})
+            dy=dym.interp(lat=xlat,lon=xlon,kwargs={"fill_value": "extrapolate"})
+
+            grad=xr.merge([dx,dy])
+            grad.to_netcdf(ofn,format='NETCDF4')
+
 
 calc_grad('UKESM1-0-LL')
 # [calc_grad(md) for md in tqdm(lmd)]

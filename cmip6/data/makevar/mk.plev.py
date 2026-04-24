@@ -16,15 +16,16 @@ from scipy.interpolate import interp1d
 
 # collect warmings across the ensembles
 
-slev=925 # in hPa
-# livar=['zg']
-livar=['ua','va']
+slev=500 # in hPa
+livar=['zg']
+# livar=['ta']
 lvarn=['%s%g'%(ivar,slev) for ivar in livar]
 
+mgen='cmip6'
 fo = 'historical' # forcing (e.g., ssp245)
 # fo = 'ssp370' # forcing (e.g., ssp245)
 
-freq='Eday'
+freq='day'
 
 lmd=mods(fo) # create list of ensemble members
 
@@ -38,19 +39,19 @@ def maskss(vn,psd):
 
 def calc_plev(md,ivar,varn):
     ens=emem(md)
-    grd=grid(md)
+    grd=grid(md,mgen)
 
-    odir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,varn,md,ens,grd)
+    odir='/project/amp02/miyawaki/data/share/%s/%s/%s/%s/%s/%s/%s' % (mgen,fo,freq,varn,md,ens,grd)
     if not os.path.exists(odir):
         os.makedirs(odir)
 
     print('Loading ps...')
-    psdir='/project/mojave/cmip6/%s/%s/%s/%s/%s/%s' % (fo,'Amon','ps',md,ens,grd)
+    psdir='/project/%s/%s/%s/%s/%s/%s/%s' % (mgen,fo,'Amon','ps',md,ens,grd)
     # load monthly ps
     ps=xr.open_mfdataset('%s/*.nc'%psdir)['ps'].load()
     print('\nDone...')
 
-    idir='/project/mojave/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,ivar,md,ens,grd)
+    idir='/project/%s/%s/%s/%s/%s/%s/%s' % (mgen,fo,freq,ivar,md,ens,grd)
     for _,_,files in os.walk(idir):
         for fn in files:
             try:
@@ -81,9 +82,9 @@ def calc_plev(md,ivar,varn):
 def loopvn(md):
     [calc_plev(md,ivar,varn) for ivar,varn in zip(livar,lvarn)]
 
-loopvn('UKESM1-0-LL')
+# loopvn('UKESM1-0-LL')
 # [loopvn(md) for md in tqdm(lmd)]
 
-# if __name__=='__main__':
-#     with Pool(max_workers=len(lmd)) as p:
-#         p.map(loopvn,lmd)
+if __name__=='__main__':
+    with Pool(max_workers=len(lmd)) as p:
+        p.map(loopvn,lmd)

@@ -6,6 +6,7 @@ import pickle
 import numpy as np
 import xarray as xr
 import cartopy.crs as ccrs
+import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.ticker as mticker
@@ -18,32 +19,35 @@ import colormaps as cmaps
 
 nt=7 # window size in days
 p=97.5
-lvn=['ta_advtsurf']
-vnp= 'ta_advtsurf'
+lvn=['ooplh']
+vnp= 'ooplh'
 # lvn=['tas']
 # vnp= 'tas'
 domp=True
-nhmon=[12,1,2]
-shmon=[6,7,8]
+nhmon=[7]
+shmon=[1]
+custombox = True
+llextent = (-130, -90, 25, 45)
 tlat=30 # upper bound for low latitude
 plat=30 # lower bound for high latitude
 nhhl=True
 tropics=False
-reverse=True
+reverse=False
 # lvn=['ooplh','ooplh_fixbc','ooplh_fixmsm','ooplh_rddsm']
 # vnp='ooplh'
 se = 'sc' # season (ann, djf, mam, jja, son)
 fo1='historical' # forcings 
 fo2='ssp370' # forcings 
 fo='%s-%s'%(fo2,fo1)
-his='1950-1980'
-fut='2070-2100'
-# his='1980-2000'
-# fut='gwl2.0'
+# his='1950-1980'
+# fut='2070-2100'
+his='1980-2000'
+fut='gwl2.0'
 dpi=600
 skip507599=True
 
-md='mmm'
+# md='mmm'
+md='CESM2'
 
 # load land indices
 lmi,_=pickle.load(open('/project/amp/miyawaki/data/share/lomask/cesm2/lomi.pickle','rb'))
@@ -60,7 +64,8 @@ def cmap(vn):
     if vn in vbr:
         return 'BrBG'
     else:
-        return cmaps.cmp_b2r
+        # return cmaps.cmp_b2r
+        return 'RdBu_r'
 
 def vmaxdd(vn):
     lvm={   
@@ -278,12 +283,100 @@ def plot(vn):
         lldpvn=mrghemi(lldpvnnh,lldpvnsh)
     llddpvn=mrghemi(llddpvnnh,llddpvnsh)
 
+    if custombox:
+        if domp:
+            # plot NH HL ONLY
+            fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
+            ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
+            clf=ax.pcolormesh(mlon, mlat, lldmvn, vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+            ax.coastlines()
+            # Add state boundaries
+            states = cfeature.NaturalEarthFeature(category='cultural',
+                                                  name='admin_1_states_provinces_lines',
+                                                  scale='50m',
+                                                  facecolor='none',
+                                                  linewidth=0.5)
+            ax.add_feature(states, edgecolor='black', linewidth=0.5)
+            # Add borders (for international borders)
+            ax.add_feature(cfeature.BORDERS, linestyle='-')
+            ax.set_extent(llextent,crs=ccrs.PlateCarree())
+            gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
+            gl.ylocator=mticker.FixedLocator([49])
+            gl.yformatter=LatitudeFormatter()
+            gl.xlines=False
+            gl.left_labels=False
+            gl.bottom_labels=False
+            gl.right_labels=True
+            gl.top_labels=False
+            cb=fig.colorbar(clf,location='bottom',aspect=50)
+            cb.ax.tick_params(labelsize=12)
+            cb.set_label(label=r'$\Delta %s^{%g}$ (%s)'%(vnlb,50,unlb),size=16)
+            fig.savefig(f'{odir}/mon{nhmon[0]}.d{vn}.{fo}.{fut}.custom.png', format='png', dpi=dpi)
+
+            # plot NH HL ONLY
+            fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
+            ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
+            clf=ax.pcolormesh(mlon, mlat, lldpvn, vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+            ax.coastlines()
+            # Add state boundaries
+            states = cfeature.NaturalEarthFeature(category='cultural',
+                                                  name='admin_1_states_provinces_lines',
+                                                  scale='50m',
+                                                  facecolor='none',
+                                                  linewidth=0.5)
+            ax.add_feature(states, edgecolor='black', linewidth=0.5)
+            # Add borders (for international borders)
+            ax.add_feature(cfeature.BORDERS, linestyle='-')
+            ax.set_extent(llextent,crs=ccrs.PlateCarree())
+            gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
+            gl.ylocator=mticker.FixedLocator([49])
+            gl.yformatter=LatitudeFormatter()
+            gl.xlines=False
+            gl.left_labels=False
+            gl.bottom_labels=False
+            gl.right_labels=True
+            gl.top_labels=False
+            cb=fig.colorbar(clf,location='bottom',aspect=50)
+            cb.ax.tick_params(labelsize=12)
+            cb.set_label(label=r'$\Delta %s^{%g}$ (%s)'%(vnlb,p,unlb),size=16)
+            fig.savefig(f'{odir}/mon{nhmon[0]}.dp{int(p):02d}{vn}.{fo}.{fut}.custom.png', format='png', dpi=dpi)
+
+        # plot NH HL ONLY
+        fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
+        ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
+        clf=ax.pcolormesh(mlon, mlat, llddpvn, vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+        ax.coastlines()
+        # Add state boundaries
+        states = cfeature.NaturalEarthFeature(category='cultural',
+                                              name='admin_1_states_provinces_lines',
+                                              scale='50m',
+                                              facecolor='none',
+                                              linewidth=0.5)
+        ax.add_feature(states, edgecolor='black', linewidth=0.5)
+        # Add borders (for international borders)
+        ax.add_feature(cfeature.BORDERS, linestyle='-')
+        ax.set_extent(llextent,crs=ccrs.PlateCarree())
+        gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
+        gl.ylocator=mticker.FixedLocator([])
+        gl.yformatter=LatitudeFormatter()
+        gl.xlines=False
+        gl.left_labels=False
+        gl.bottom_labels=False
+        gl.right_labels=True
+        gl.top_labels=False
+        cb=fig.colorbar(clf,location='bottom',aspect=50)
+        cb.ax.tick_params(labelsize=12)
+        cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
+        fig.savefig(f'{odir}/mon{nhmon[0]}.ddp{int(p):02d}{vn}.{fo}.{fut}.custom.png', format='png', dpi=dpi)
+
+        sys.exit()
+
+
     if nhhl:
         if domp:
             # plot NH HL ONLY
             fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-            # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-            ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+            ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
             clf=ax.contourf(mlon, mlat, lldmvn, np.arange(-vmd,vmd+dvmd,dvmd),extend='both', vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
             ax.coastlines()
             ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
@@ -298,13 +391,11 @@ def plot(vn):
             cb=fig.colorbar(clf,location='bottom',aspect=50)
             cb.ax.tick_params(labelsize=12)
             cb.set_label(label=r'$\Delta %s^{%g}$ (%s)'%(vnlb,50,unlb),size=16)
-            fig.savefig('%s/djf+jja.d%02d%s.%s.%s.hl.pdf' % (odir,50,vn,fo,fut), format='pdf', dpi=dpi)
-            fig.savefig('%s/djf+jja.d%02d%s.%s.%s.hl.png' % (odir,50,vn,fo,fut), format='png', dpi=dpi)
+            fig.savefig(f'{odir}/mon{nhmon[0]}.d{vn}.{fo}.{fut}.hl.png', format='png', dpi=dpi)
 
             # plot NH HL ONLY
             fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-            # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-            ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+            ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
             clf=ax.contourf(mlon, mlat, lldpvn, np.arange(-vmd,vmd+dvmd,dvmd),extend='both', vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
             ax.coastlines()
             ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
@@ -319,13 +410,11 @@ def plot(vn):
             cb=fig.colorbar(clf,location='bottom',aspect=50)
             cb.ax.tick_params(labelsize=12)
             cb.set_label(label=r'$\Delta %s^{%g}$ (%s)'%(vnlb,p,unlb),size=16)
-            fig.savefig('%s/djf+jja.dp%02d%s.%s.%s.hl.pdf' % (odir,p,vn,fo,fut), format='pdf', dpi=dpi)
-            fig.savefig('%s/djf+jja.dp%02d%s.%s.%s.hl.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+            fig.savefig(f'{odir}/mon{nhmon[0]}.dp{int(p):02d}{vn}.{fo}.{fut}.hl.png', format='png', dpi=dpi)
 
         # plot NH HL ONLY
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-        # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-        ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+        ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
         clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
         ax.coastlines()
         ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
@@ -340,13 +429,11 @@ def plot(vn):
         cb=fig.colorbar(clf,location='bottom',aspect=50)
         cb.ax.tick_params(labelsize=12)
         cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-        fig.savefig('%s/djf+jja.ddp%02d%s.%s.%s.hl.pdf' % (odir,p,vn,fo,fut), format='pdf', dpi=dpi)
-        fig.savefig('%s/djf+jja.ddp%02d%s.%s.%s.hl.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+        fig.savefig(f'{odir}/mon{nhmon[0]}.ddp{int(p):02d}{vn}.{fo}.{fut}.hl.png', format='png', dpi=dpi)
 
         # plot NH HL ONLY
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.PlateCarree(central_longitude=0)},figsize=(5,4),constrained_layout=True)
-        # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-        ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+        ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
         clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
         ax.coastlines()
         ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
@@ -361,14 +448,13 @@ def plot(vn):
         cb=fig.colorbar(clf,location='bottom',aspect=50)
         cb.ax.tick_params(labelsize=12)
         cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-        fig.savefig('%s/djf+jja.ddp%02d%s.%s.%s.hl.lon0.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+        fig.savefig(f'{odir}/mon{nhmon[0]}.ddp{int(p):02d}{vn}.{fo}.{fut}.hl.lon0.png', format='png', dpi=dpi)
 
 
     # plot TROPICS ONLY
     if tropics:
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-        # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-        ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+        ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
         clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
         ax.coastlines()
         ax.set_extent((-180,180,-tlat,tlat),crs=ccrs.PlateCarree())
@@ -383,18 +469,17 @@ def plot(vn):
         cb=fig.colorbar(clf,location='bottom',aspect=50)
         cb.ax.tick_params(labelsize=12)
         cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-        fig.savefig('%s/winter.ddp%02d%s.%s.%s.tr.pdf' % (odir,p,vn,fo,fut), format='pdf', dpi=dpi)
-        fig.savefig('%s/winter.ddp%02d%s.%s.%s.tr.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+        fig.savefig(f'{odir}/mon{nhmon[0]}.ddp{int(p):02d}{vn}.{fo}.{fut}.tr.png', format='png', dpi=dpi)
 
     # plot pct warming - mean warming
     fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
     clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
     ax.coastlines()
-    ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+    ax.set_title(f'{md.upper()} {fo.upper()} {nhmon[0]}+{shmon[0]}', fontsize=16)
     cb=fig.colorbar(clf,location='bottom',aspect=50)
     cb.ax.tick_params(labelsize=16)
     cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-    fig.savefig('%s/winter.ddp%02d%s.%s.%s.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+    fig.savefig(f'{odir}/mon{nhmon[0]}.ddp{int(p):02d}{vn}.{fo}.{fut}.png', format='png', dpi=dpi)
 
 # run
 [plot(vn) for vn in lvn]

@@ -24,8 +24,9 @@ se='sc'
 nt=7
 p=95
 doy=False
-only95=True
+only95=False
 
+mgen = 'cmip6'
 fo0 = 'historical' # forcing (e.g., ssp245)
 byr0=[1980,2000]
 
@@ -37,7 +38,7 @@ freq='day'
 lmd=mods(fo) # create list of ensemble members
 
 def get_fn0(varn,md,fo,byr):
-    idir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
+    idir=f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo}/{md}/{varn}'
     if 'gwl' in byr:
         fn='%s/lm.%s_%s.%s.nc' % (idir,varn,byr,se)
     else:
@@ -45,7 +46,7 @@ def get_fn0(varn,md,fo,byr):
     return fn
 
 def get_fn(varn,fo,byr,md):
-    idir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
+    idir=f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo}/{md}/{varn}'
     if doy:
         px='pc.doy'
     else:
@@ -57,7 +58,7 @@ def get_fn(varn,fo,byr,md):
     return fn
 
 def get_bc(md):
-    idir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,'bc')
+    idir=f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo}/{md}/bc'
     if 'gwl' in byr:
         iname='%s/%s.%s.%s.pickle' % (idir,'bc',byr,se)
     else:
@@ -69,9 +70,9 @@ def eval_bc(sm,bc):
 
 def calc_plh(md):
     ens=emem(md)
-    grd=grid(md)
+    grd=grid(md, mgen)
 
-    odir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
+    odir=f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo}/{md}/{varn}'
     if not os.path.exists(odir):
         os.makedirs(odir)
 
@@ -104,7 +105,7 @@ def calc_plh(md):
         return slh
 
     ooplh=[]
-    for ip,p in enumerate(pct):
+    for ip,p in enumerate(tqdm(pct)):
         psm=sm.sel(percentile=[p])
         with Client(n_workers=12):
             tasks=[dask.delayed(plhmon)(mon,psm,bc) for mon in np.arange(1,13,1)]
@@ -118,11 +119,11 @@ def calc_plh(md):
 
     # save plh
     oname=get_fn(varn,fo,byr,md)
-    plh.to_netcdf(oname,format='NETCDF4')
+    ooplh.to_netcdf(oname,format='NETCDF4')
 
 # if __name__=='__main__':
-#     calc_plh('CESM2')
-#     # [calc_plh(md) for md in lmd]
+#     # calc_plh('CESM2')
+#     [calc_plh(md) for md in lmd]
 
 if __name__=='__main__':
     with Pool(max_workers=len(lmd)) as p:

@@ -16,12 +16,10 @@ from util import mods
 from utils import monname,varnlb,unitlb
 import colormaps as cmaps
 
-nt=7 # window size in days
-p=97.5
-lvn=['ta_advtsurf']
-vnp= 'ta_advtsurf'
-# lvn=['tas']
-# vnp= 'tas'
+s='min'
+seas='djf'
+vn= 'advtsurf.ctas.d3'
+vnp='advtsurf.ctas.d3'
 domp=True
 nhmon=[12,1,2]
 shmon=[6,7,8]
@@ -33,17 +31,29 @@ reverse=True
 # lvn=['ooplh','ooplh_fixbc','ooplh_fixmsm','ooplh_rddsm']
 # vnp='ooplh'
 se = 'sc' # season (ann, djf, mam, jja, son)
+
+# mgen='cmip6'
+# fo1='historical' # forcings 
+# fo2='ssp370' # forcings 
+# his='1950-1980'
+# fut='2070-2100'
+
+mgen='cmip5'
 fo1='historical' # forcings 
-fo2='ssp370' # forcings 
-fo='%s-%s'%(fo2,fo1)
+fo2='rcp85' # forcings 
 his='1950-1980'
 fut='2070-2100'
-# his='1980-2000'
-# fut='gwl2.0'
+
+fo='%s-%s'%(fo2,fo1)
 dpi=600
 skip507599=True
 
-md='mmm'
+# lmd=mods(fo1)
+# lmd.remove('NorESM2-LM')
+# lmd.remove('NorESM2-MM')
+# lmd.remove('TaiESM1')
+
+lmd=['CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','inmcm4','MPI-ESM-LR','MPI-ESM-MR']
 
 # load land indices
 lmi,_=pickle.load(open('/project/amp/miyawaki/data/share/lomask/cesm2/lomi.pickle','rb'))
@@ -54,6 +64,8 @@ rgdir='/project/amp/miyawaki/data/share/regrid'
 cfil='%s/f.e11.F1850C5CNTVSST.f09_f09.002.cam.h0.PHIS.040101-050012.nc'%rgdir
 cdat=xr.open_dataset(cfil)
 gr=xr.Dataset({'lat': (['lat'], cdat['lat'].data)}, {'lon': (['lon'], cdat['lon'].data)})
+gr0=gr.copy()
+gr['lon'] = np.append(gr['lon'].data,360)
 
 def cmap(vn):
     vbr=['td_mrsos','ti_pr','ti_ev']
@@ -65,21 +77,21 @@ def cmap(vn):
 def vmaxdd(vn):
     lvm={   
             'tas':  [6,1],
-            'ta850':  [2,0.2],
+            'ta850':  [6,1],
             'snc':  [0.4,0.04],
-            'advt850_t':  [2,0.2],
-            'advty_mon850_t':  [2,0.2],
-            'advty_mon850_t_hs':  [2,0.2],
-            'advt850_t18_t':  [2,0.2],
-            'advty850_t18_t':  [2,0.2],
-            'advt850_t_hs':  [2,0.2],
-            'ta850':  [2,0.2],
-            'twas': [2,0.2],
+            'advt850_t':  [6,1],
+            'advty_mon850_t':  [6,1],
+            'advty_mon850_t_hs':  [6,1],
+            'advt850_t18_t':  [6,1],
+            'advty850_t18_t':  [6,1],
+            'advt850_t_hs':  [6,1],
+            'ta850':  [6,1],
+            'twas': [6,1],
             'hurs': [5,0.5],
             'ef':  [0.05,0.005],
             'ef2':  [0.05,0.005],
             'ef3':  [0.05,0.005],
-            'mrsos': [2,0.2],
+            'mrsos': [6,1],
             'sfcWind': [0.5,0.005],
             'rsfc': [10,1],
             'swsfc': [10,1],
@@ -110,42 +122,43 @@ def vmaxdd(vn):
             'fat850': [0.3,0.03],
             'advt850_wm2': [50,5],
             'advt850': [2.0,0.5],
-            'ta_advtsurf': [2.0,0.5],
             'advtsurf': [2.0,0.5],
-            'advt_doy850': [0.1,0.01],
-            'advt_mon850': [0.1,0.01],
-            'advt_mon925': [0.1,0.01],
-            'advty_doy850': [0.1,0.01],
-            'advty_mon850': [0.1,0.01],
-            'advty_mon925': [0.1,0.01],
-            'advt850_t18': [0.1,0.01],
+            'advtsurf.ctas.d3': [2.0,0.5],
+            'advtsurf.cadvtsurf.d3': [2.0,0.5],
+            'advt_doy850': [2.0,0.5],
+            'advt_mon850': [2.0,0.5],
+            'advt_mon925': [2.0,0.5],
+            'advty_doy850': [2.0,0.5],
+            'advty_mon850': [2.0,0.5],
+            'advty_mon925': [2.0,0.5],
+            'advt850_t18': [2.0,0.5],
             'advtx850': [0.03,0.003],
             'advtx850_t18': [0.03,0.003],
-            'advty850': [0.1,0.01],
-            'advm850': [0.1,0.01],
+            'advty850': [2.0,0.5],
+            'advm850': [2.0,0.5],
             'advmx850': [0.03,0.003],
-            'advmy850': [0.1,0.01],
+            'advmy850': [2.0,0.5],
             }
     return lvm[vn]
 
 def vmaxd(vn):
     lvm={   
-            'tas':  [2,0.2],
-            'ta850':  [2,0.2],
+            'tas':  [6,1],
+            'ta850':  [6,1],
             'snc':  [0.4,0.04],
-            'advt850_t':  [2,0.2],
-            'advty_mon850_t':  [2,0.2],
-            'advty_mon850_t_hs':  [2,0.2],
-            'advt850_t18_t':  [2,0.2],
-            'advty850_t18_t':  [2,0.2],
-            'advt850_t_hs':  [2,0.2],
-            'ta850':  [2,0.2],
-            'twas': [2,0.2],
+            'advt850_t':  [6,1],
+            'advty_mon850_t':  [6,1],
+            'advty_mon850_t_hs':  [6,1],
+            'advt850_t18_t':  [6,1],
+            'advty850_t18_t':  [6,1],
+            'advt850_t_hs':  [6,1],
+            'ta850':  [6,1],
+            'twas': [6,1],
             'hurs': [5,0.5],
             'ef':  [0.05,0.005],
             'ef2':  [0.05,0.005],
             'ef3':  [0.05,0.005],
-            'mrsos': [2,0.2],
+            'mrsos': [6,1],
             'sfcWind': [0.5,0.005],
             'rsfc': [10,1],
             'swsfc': [10,1],
@@ -175,52 +188,56 @@ def vmaxd(vn):
             'fa850': [0.3,0.03],
             'fat850': [0.3,0.03],
             'advt850_wm2': [50,5],
-            'advt850': [0.1,0.01],
-            'ta_advtsurf': [0.1,0.01],
-            'advtsurf': [0.1,0.01],
-            'advt_doy850': [0.1,0.01],
-            'advt_mon850': [0.1,0.01],
-            'advt_mon925': [0.1,0.01],
-            'advty_doy850': [0.1,0.01],
-            'advty_mon850': [0.1,0.01],
-            'advty_mon925': [0.1,0.01],
-            'advt850_t18': [0.1,0.01],
+            'advt850': [2.5,0.5],
+            'advtsurf': [2.5,0.5],
+            'advtsurf.ctas.d3': [2.5,0.5],
+            'advtsurf.cadvtsurf.d3': [2.5,0.5],
+            'advt_doy850': [2.5,0.5],
+            'advt_mon850': [2.5,0.5],
+            'advt_mon925': [2.5,0.5],
+            'advty_doy850': [2.5,0.5],
+            'advty_mon850': [2.5,0.5],
+            'advty_mon925': [2.5,0.5],
+            'advt850_t18': [2.5,0.5],
             'advtx850': [0.03,0.003],
             'advtx850_t18': [0.03,0.003],
-            'advty850': [0.1,0.01],
-            'advm850': [0.1,0.01],
+            'advty850': [2.5,0.5],
+            'advm850': [2.5,0.5],
             'advmx850': [0.03,0.003],
-            'advmy850': [0.1,0.01],
+            'advmy850': [2.5,0.5],
             }
     return lvm[vn]
 
-def plot(vn):
+def plot(md,vn):
     vmdd,dvmdd=vmaxdd(vn)
     vmd,dvmd=vmaxd(vn)
     vnlb=varnlb(vn)
     unlb=unitlb(vn)
-    odir = '/project/amp/miyawaki/plots/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,vn)
+    # if 'advt' in vn:
+    #     unlb='K d$^{-1}$'
+    odir = '/project/amp/miyawaki/plots/p004/%s/%s/%s/%s/%s' % (mgen,se,fo,md,vn)
 
     vno=vn
     if '_wm2' in vn:
         vn=vn.replace('_wm2','')
 
-    idir = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,vn)
+    idir = '/project/amp02/miyawaki/data/p004/%s/%s/%s/%s/%s' % (mgen,se,fo,md,vn)
 
     if not os.path.exists(odir):
         os.makedirs(odir)
 
     # warming
     def loadvar(px):
-        xvn=xr.open_dataarray('%s/%s.md.%s_%s_%s.%s.nc' % (idir,px,vn,his,fut,se))
+        xvn=xr.open_dataarray('%s/%s.avg.%s_%s_%s.%s.nc' % (idir,px,vn,his,fut,se))
+        xvn=xvn.sel(season=seas).squeeze()
         if 'pc' in px:
-            pct=xvn['percentile']
-            xvn=xvn.sel(percentile=pct==p).squeeze()
+            stat=xvn['stat']
+            xvn=xvn.sel(stat=stat==s).squeeze()
         if reverse and (vn in ['fsm','gflx','hfss','hfls','fat850','fa850','rfa'] or 'ooplh' in vn or 'adv' in vn) and '_t' not in vn:
             xvn=-xvn
         if '_wm2' in vno:
             xvn=1.16*1500*xvn
-        if 'advt' in vno:
+        if 'advt' in vn:
             xvn=86400*xvn
         return xvn
 
@@ -228,67 +245,42 @@ def plot(vn):
         dmvn=loadvar('d')
         dpvn=loadvar('dpc')
     ddpvn=loadvar('ddpc')
-    pct=ddpvn['percentile']
     gpi=ddpvn['gpi']
-
-    # jja and djf means
-    def nhsh(xvn):
-        xnh=xvn.sel(month=xvn['month'].isin(nhmon)).mean('month')
-        xsh=xvn.sel(month=xvn['month'].isin(shmon)).mean('month')
-        return xnh,xsh
-
-    if domp:
-        dmvnnh,dmvnsh=nhsh(dmvn)
-        dpvnnh,dpvnsh=nhsh(dpvn)
-    ddpvnnh,ddpvnsh=nhsh(ddpvn)
 
     # remap to lat x lon
     def remap(xvn):
-        llxvn=np.nan*np.ones([gr['lat'].size*gr['lon'].size])
+        llxvn=np.nan*np.ones([gr0['lat'].size*gr0['lon'].size])
         llxvn[lmi]=xvn.data
-        llxvn=np.reshape(llxvn,(gr['lat'].size,gr['lon'].size))
+        llxvn=np.reshape(llxvn,(gr0['lat'].size,gr0['lon'].size))
         return llxvn
 
     if domp:
-        lldmvnnh,lldmvnsh=remap(dmvnnh),remap(dmvnsh)
-        lldpvnnh,lldpvnsh=remap(dpvnnh),remap(dpvnsh)
-    llddpvnnh,llddpvnsh=remap(ddpvnnh),remap(ddpvnsh)
+        lldmvn=remap(dmvn)
+        lldpvn=remap(dpvn)
+    llddpvn=remap(ddpvn)
 
     # repeat 0 deg lon info to 360 deg to prevent a blank line in contour
-    gr['lon'] = np.append(gr['lon'].data,360)
     def replon(xvn):
         xvn = np.append(xvn, xvn[...,0][...,None],axis=1)
         return xvn
 
     if domp:
-        lldmvnnh, lldmvnsh =replon(lldmvnnh), replon(lldmvnsh)
-        lldpvnnh, lldpvnsh =replon(lldpvnnh), replon(lldpvnsh)
-    llddpvnnh,llddpvnsh=replon(llddpvnnh),replon(llddpvnsh)
+        lldmvn=replon(lldmvn)
+        lldpvn=replon(lldpvn)
+    llddpvn=replon(llddpvn)
 
     [mlat,mlon] = np.meshgrid(gr['lat'], gr['lon'], indexing='ij')
-
-    # use djf for nh, jja for sh
-    def mrghemi(nh,sh):
-        xvn=np.copy(sh)
-        xvn[gr['lat']>0]=nh[gr['lat']>0]
-        return xvn
-
-    if domp:
-        lldmvn=mrghemi(lldmvnnh,lldmvnsh)
-        lldpvn=mrghemi(lldpvnnh,lldpvnsh)
-    llddpvn=mrghemi(llddpvnnh,llddpvnsh)
 
     if nhhl:
         if domp:
             # plot NH HL ONLY
-            fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-            # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-            ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
-            clf=ax.contourf(mlon, mlat, lldmvn, np.arange(-vmd,vmd+dvmd,dvmd),extend='both', vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+            fig,ax=plt.subplots(subplot_kw={'projection': ccrs.PlateCarree(central_longitude=0)},figsize=(5,4),constrained_layout=True)
+            ax.set_title(r'%s %s %s' % (md.upper(),fo.upper(),seas.upper()),fontsize=16)
+            clf=ax.contourf(mlon, mlat, lldmvn, np.arange(-vmd,vmd+dvmd,dvmd),extend='both', vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn),transform_first=True)
             ax.coastlines()
             ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
             gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
-            gl.ylocator=mticker.FixedLocator([49])
+            gl.ylocator=mticker.FixedLocator([])
             gl.yformatter=LatitudeFormatter()
             gl.xlines=False
             gl.left_labels=False
@@ -297,19 +289,17 @@ def plot(vn):
             gl.top_labels=False
             cb=fig.colorbar(clf,location='bottom',aspect=50)
             cb.ax.tick_params(labelsize=12)
-            cb.set_label(label=r'$\Delta %s^{%g}$ (%s)'%(vnlb,50,unlb),size=16)
-            fig.savefig('%s/djf+jja.d%02d%s.%s.%s.hl.pdf' % (odir,50,vn,fo,fut), format='pdf', dpi=dpi)
-            fig.savefig('%s/djf+jja.d%02d%s.%s.%s.hl.png' % (odir,50,vn,fo,fut), format='png', dpi=dpi)
+            cb.set_label(label=r'$\Delta \overline{%s}$ (%s)'%(vnlb,unlb),size=16)
+            fig.savefig('%s/%s.d%s%s.%s.%s.hl.png' % (odir,seas,'avg',vn,fo,fut), format='png', dpi=dpi)
 
             # plot NH HL ONLY
-            fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-            # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-            ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
-            clf=ax.contourf(mlon, mlat, lldpvn, np.arange(-vmd,vmd+dvmd,dvmd),extend='both', vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+            fig,ax=plt.subplots(subplot_kw={'projection': ccrs.PlateCarree(central_longitude=0)},figsize=(5,4),constrained_layout=True)
+            ax.set_title(r'%s %s %s' % (md.upper(),fo.upper(),seas.upper()),fontsize=16)
+            clf=ax.contourf(mlon, mlat, lldpvn, np.arange(-vmd,vmd+dvmd,dvmd),extend='both', vmax=vmd, vmin=-vmd, transform=ccrs.PlateCarree(),cmap=cmap(vn),transform_first=True)
             ax.coastlines()
             ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
             gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
-            gl.ylocator=mticker.FixedLocator([49])
+            gl.ylocator=mticker.FixedLocator([])
             gl.yformatter=LatitudeFormatter()
             gl.xlines=False
             gl.left_labels=False
@@ -318,15 +308,13 @@ def plot(vn):
             gl.top_labels=False
             cb=fig.colorbar(clf,location='bottom',aspect=50)
             cb.ax.tick_params(labelsize=12)
-            cb.set_label(label=r'$\Delta %s^{%g}$ (%s)'%(vnlb,p,unlb),size=16)
-            fig.savefig('%s/djf+jja.dp%02d%s.%s.%s.hl.pdf' % (odir,p,vn,fo,fut), format='pdf', dpi=dpi)
-            fig.savefig('%s/djf+jja.dp%02d%s.%s.%s.hl.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+            cb.set_label(label=r'$\Delta %s$ (%s)'%(vnlb,unlb),size=16)
+            fig.savefig('%s/%s.dp%s%s.%s.%s.hl.png' % (odir,seas,s,vn,fo,fut), format='png', dpi=dpi)
 
         # plot NH HL ONLY
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-        # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-        ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
-        clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+        ax.set_title(r'%s %s %s' % (md.upper(),fo.upper(),seas.upper()),fontsize=16)
+        clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn),transform_first=True)
         ax.coastlines()
         ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
         gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
@@ -340,14 +328,13 @@ def plot(vn):
         cb=fig.colorbar(clf,location='bottom',aspect=50)
         cb.ax.tick_params(labelsize=12)
         cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-        fig.savefig('%s/djf+jja.ddp%02d%s.%s.%s.hl.pdf' % (odir,p,vn,fo,fut), format='pdf', dpi=dpi)
-        fig.savefig('%s/djf+jja.ddp%02d%s.%s.%s.hl.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+        fig.savefig('%s/%s.ddp%s%s.%s.%s.hl.png' % (odir,seas,s,vn,fo,fut), format='png', dpi=dpi)
 
         # plot NH HL ONLY
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.PlateCarree(central_longitude=0)},figsize=(5,4),constrained_layout=True)
         # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-        ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
-        clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
+        ax.set_title(r'%s %s %s' % (md.upper(),fo.upper(),seas.upper()),fontsize=16)
+        clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn),transform_first=True)
         ax.coastlines()
         ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
         gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
@@ -361,14 +348,14 @@ def plot(vn):
         cb=fig.colorbar(clf,location='bottom',aspect=50)
         cb.ax.tick_params(labelsize=12)
         cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-        fig.savefig('%s/djf+jja.ddp%02d%s.%s.%s.hl.lon0.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+        fig.savefig('%s/%s.ddp%s%s.%s.%s.hl.lon0.png' % (odir,seas,s,vn,fo,fut), format='png', dpi=dpi)
 
 
     # plot TROPICS ONLY
     if tropics:
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
         # ax.set_title(r'%s %s' % (md.upper(),fo.upper()),fontsize=16)
-        ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+        ax.set_title(r'%s %s %s' % (md.upper(),fo.upper(),seas.upper()),fontsize=16)
         clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(),cmap=cmap(vn))
         ax.coastlines()
         ax.set_extent((-180,180,-tlat,tlat),crs=ccrs.PlateCarree())
@@ -383,18 +370,17 @@ def plot(vn):
         cb=fig.colorbar(clf,location='bottom',aspect=50)
         cb.ax.tick_params(labelsize=12)
         cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-        fig.savefig('%s/winter.ddp%02d%s.%s.%s.tr.pdf' % (odir,p,vn,fo,fut), format='pdf', dpi=dpi)
-        fig.savefig('%s/winter.ddp%02d%s.%s.%s.tr.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+        fig.savefig('%s/%s.ddp%s%s.%s.%s.tr.png' % (odir,seas,s,vn,fo,fut), format='png', dpi=dpi)
 
     # plot pct warming - mean warming
     fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
     clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
     ax.coastlines()
-    ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
+    ax.set_title(r'%s %s %s' % (md.upper(),fo.upper(),seas.upper()),fontsize=16)
     cb=fig.colorbar(clf,location='bottom',aspect=50)
     cb.ax.tick_params(labelsize=16)
     cb.set_label(label=r'$\Delta \delta %s$ (%s)'%(vnlb,unlb),size=16)
-    fig.savefig('%s/winter.ddp%02d%s.%s.%s.png' % (odir,p,vn,fo,fut), format='png', dpi=dpi)
+    fig.savefig('%s/%s.ddp%s%s.%s.%s.png' % (odir,seas,s,vn,fo,fut), format='png', dpi=dpi)
 
 # run
-[plot(vn) for vn in lvn]
+[plot(md,vn) for md in tqdm(lmd)]

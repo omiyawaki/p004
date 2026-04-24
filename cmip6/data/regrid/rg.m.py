@@ -20,17 +20,17 @@ from glade_utils import grid
 
 # ld=np.concatenate((np.arange(20,80+20,20),np.arange(150,850+100,100)))
 # lvn=['mrso%g'%d for d in ld] # input1
-lvn=['advty_doy850']
+lvn=['sfcWind']
 ty='2d'
 checkexist=False
 doy=False
 
-# fo = 'historical' # forcing (e.g., ssp245)
-# byr=[1980,2000]
+fo = 'historical' # forcing (e.g., ssp245)
+byr=[1980,2000]
 
-fo = 'ssp370' # forcing (e.g., ssp245)
-byr='gwl2.0'
-dyr=10
+# fo = 'ssp370' # forcing (e.g., ssp245)
+# byr='gwl2.0'
+# dyr=10
 
 freq='day'
 se = 'sc' # season (ann, djf, mam, jja, son)

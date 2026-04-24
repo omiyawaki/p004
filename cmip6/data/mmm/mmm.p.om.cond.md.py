@@ -20,7 +20,7 @@ from tqdm import tqdm
 from util import mods
 from utils import monname
 
-lvn=['gflx'] # input1
+lvn=['advtsurf'] # input1
 se = 'sc' # season (ann, djf, mam, jja, son)
 fo1='historical' # forcings 
 fo2='ssp370' # forcings 
@@ -30,7 +30,8 @@ his='1980-2000'
 fut='gwl2.0'
 
 lmd=mods(fo1)
-# lmd=['CESM2']
+# lmd=['UKESM1-0-LL','MIROC6','IPSL-CM6A-LR','EC-Earth3','MPI-ESM1-2-LR','KACE-1-0-G','MRI-ESM2-0','CanESM5','MIROC-ES2L','MPI-ESM1-2-HR','ACCESS-CM2']
+# lmd.remove('EC-Earth3')
 
 def calc_mmm(varn):
     if varn=='ooplh_fixbc':

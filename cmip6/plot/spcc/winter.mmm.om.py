@@ -16,13 +16,13 @@ from util import mods
 from utils import monname,varnlb,unitlb
 
 nt=7 # window size in days
-p=97.5
+p=2.5
 tlat=30
 plat=30
 nhmon=[12,1,2]
 shmon=[6,7,8]
-lvn=['gflx']
-vnp= 'gflx'
+lvn=['tas']
+vnp= 'tas'
 nhhl=True
 tr=False
 reverse=True
@@ -97,6 +97,8 @@ def vmaxdd(vn):
             'fa850': [0.3,0.03],
             'fat850': [0.3,0.03],
             'advt850': [0.1,0.01],
+            'advt925': [0.1,0.01],
+            'advtsurf': [0.1,0.01+1e-4],
             'advt_doy850': [0.1,0.01],
             'advty_doy850': [0.1,0.01],
             'advty_mon850': [0.1,0.01],
@@ -201,7 +203,8 @@ def plot(vn):
 
     if nhhl:
         fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-        clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
+        # clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
+        clf=ax.pcolormesh(mlon, mlat, llddpvn, vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
         ax.coastlines()
         ax.set_extent((-180,180,plat,90),crs=ccrs.PlateCarree())
         gl=ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=0.5,color='gray',y_inline=False)
@@ -220,7 +223,8 @@ def plot(vn):
 
     # plot pct warming - mean warming
     fig,ax=plt.subplots(subplot_kw={'projection': ccrs.Robinson(central_longitude=240)},figsize=(5,4),constrained_layout=True)
-    clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
+    # clf=ax.contourf(mlon, mlat, llddpvn, np.arange(-vmdd,vmdd+dvmdd,dvmdd),extend='both', vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
+    clf=ax.pcolormesh(mlon, mlat, llddpvn, vmax=vmdd, vmin=-vmdd, transform=ccrs.PlateCarree(), cmap=cmap(vn))
     ax.coastlines()
     ax.set_title(r'%s %s DJF+JJA' % (md.upper(),fo.upper()),fontsize=16)
     cb=fig.colorbar(clf,location='bottom',aspect=50)

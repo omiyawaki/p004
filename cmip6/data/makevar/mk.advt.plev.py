@@ -20,24 +20,25 @@ gvar='gradt%g'%slev
 uvar='ua%g'%slev
 vvar='va%g'%slev
 
+mgen='cmip6'
 # fo = 'historical' # forcing (e.g., ssp245)
 fo = 'ssp370' # forcing (e.g., ssp245)
 
 checkexist=False
-freq='Eday'
+freq='day'
 
 lmd=mods(fo) # create list of ensemble members
 
 def calc_adv(md):
     ens=emem(md)
-    grd=grid(md)
+    grd=grid(md,mgen)
 
-    odir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,varn,md,ens,grd)
+    odir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s%s' % (fo,freq,varn,md,ens,grd)
     if not os.path.exists(odir):
         os.makedirs(odir)
 
     chk=0
-    idir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,gvar,md,ens,grd)
+    idir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s%s' % (fo,freq,gvar,md,ens,grd)
     for _,_,files in os.walk(idir):
         for fn in files:
             ofn='%s/%s'%(odir,fn.replace(gvar,varn))
@@ -65,7 +66,8 @@ def calc_adv(md):
                     va=ds[vvar]
 
                 # total horizontal advection
-                adv=c.cpd*(ua*dx+va*dy)
+                adv=ua.copy()
+                adv.data=ua.data*dx.data+va.data*dy.data
 
                 adv=adv.rename(varn)
                 adv.to_netcdf(ofn)
@@ -73,8 +75,8 @@ def calc_adv(md):
                 print(e)
                 print('WARNING skipping %s'%ofn)
 
-calc_adv('UKESM1-0-LL')
-# [calc_adv(md) for md in tqdm(lmd)]
+# calc_adv('UKESM1-0-LL')
+[calc_adv(md) for md in tqdm(lmd)]
 
 # if __name__=='__main__':
 #     with Pool(max_workers=len(lmd)) as p:

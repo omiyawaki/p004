@@ -57,7 +57,7 @@ for fo in lfo:
                 inpv[ivar]=svar
 
             # compute saturation sp humidity
-            qs500=saturation_mixing_ratio(500*units.hPa,inpv['ta500']*units.kelvin)
+            qs500=specific_humidity_from_mixing_ratio(saturation_mixing_ratio(500*units.hPa,inpv['ta500']*units.kelvin))
             # compute mse
             m500s=c.cpd*inpv['ta500']*units.kelvin+c.g*inpv['zg500']*units.m+c.Lv*qs500
 

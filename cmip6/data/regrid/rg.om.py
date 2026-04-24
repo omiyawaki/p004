@@ -2,31 +2,22 @@ import os
 import sys
 sys.path.append('../')
 sys.path.append('/home/miyawaki/scripts/common')
-import dask
-from dask.diagnostics import ProgressBar
-from dask.distributed import Client
-import dask.multiprocessing
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+from concurrent.futures import ProcessPoolExecutor as Pool
 import pickle
 import numpy as np
 import xesmf as xe
 import xarray as xr
 import constants as c
-from scipy.ndimage import generic_filter1d
-from winpct import get_window_indices,get_our_pct
 from tqdm import tqdm
 from util import mods,simu,emem
 from glade_utils import grid
-np.set_printoptions(threshold=sys.maxsize)
 
 # comdsect warmings across the ensembles
 
 # lvn=['siconc'] # input1
 # mycmip=False
 
-lvn=['gflx'] # input1
+lvn=['advtsurf'] # input1
 mycmip=True
 
 ty='2d'
@@ -148,10 +139,9 @@ def calc_om(md):
         else:
             vn.to_netcdf('%s/om.%s_%g-%g.%s.nc' % (odir,varn,byr[0],byr[1],se),format='NETCDF4')
 
-calc_om('KACE-1-0-G')
-# [calc_om(md) for md in tqdm(lmd)]
+calc_om('EC-Earth3')
+# # # [calc_om(md) for md in tqdm(lmd)]
 
 # if __name__=='__main__':
-#     with Client(n_workers=len(lmd)):
-#         tasks=[dask.delayed(calc_om)(md) for md in lmd]
-#         dask.compute(*tasks)
+#     with Pool(max_workers=len(lmd)) as p:
+#         p.map(calc_om,lmd)

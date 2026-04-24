@@ -14,7 +14,7 @@ def mods(fo):
     # OUTPUT 
     # lmd  : LIST of model names for that forcing
 
-    if fo in ['historical','ssp245','ssp370']:
+    if fo in ['historical','ssp245','ssp370','ssp585']:
 
         # ALL AVAILABLE SSP370 ZG, TAS and STF
         # lmd=sorted(['ACCESS-CM2','CanESM5','CESM2', 'IITM-ESM', 'MIROC-ES2L','MPI-ESM1-2-HR', 'MPI-ESM1-2-LR', 'NorESM2-LM','NorESM2-MM','UKESM1-0-LL','EC-Earth3', 'KACE-1-0-G', 'MIROC6','MRI-ESM2-0','IPSL-CM6A-LR','TaiESM1'])
@@ -55,6 +55,8 @@ def emem(md):
         mem='r2i1p1f1'
     elif md in ['UKESM1-0-LL']:
         mem='r9i1p1f2'
+    elif md in ['CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','inmcm4','MPI-ESM-LR','MPI-ESM-MR']:
+        mem='r1i1p1'
     else:
         mem='r1i1p1f1'
 

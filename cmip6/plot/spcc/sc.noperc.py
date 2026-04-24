@@ -22,7 +22,6 @@ from mpl_toolkits.axes_grid1 import Divider,Size
 nbs=int(1e2) # number of bootstrap resamples
 # lre=['et','tr'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
 lre=['tr'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
-bstype='bins' # bootstrap by mmm bin samples or multimodel samples of bin means
 tlat=30 # latitude bound for tropics
 plat=50 # midlatitude bound
 alc=0.05 # significance level (that mmm is different from 0)
@@ -45,8 +44,8 @@ h=[Size.Fixed(pds[0]), Size.Fixed(axs[0])]
 v=[Size.Fixed(pds[1]), Size.Fixed(axs[1])]
 
 varn='tas'
-varn1='ooplh_rnl'
-varnp='ooplh_rnl'
+varn1='mtr'
+varnp='mtr'
 reverse=True
 se = 'sc' # season (ann, djf, mam, jja, son)
 fo1='historical' # forcings 
@@ -57,106 +56,11 @@ his='1980-2000'
 fut='gwl2.0'
 skip507599=True
 
-lmd=mods(fo1)
-md='mmm'
+# lmd=mods(fo1)
+# md='mmm'
 
-# lmd=['CESM2']
-# md='CESM2'
-
-def ct(vn):
-    d={ 
-        'ooplh_msm':    'blue',
-        'ooplh_fixmsm': 'orange',
-        'ooplh_fixasm': 'blue',
-        'ooplh_fixbc':  'blue',
-        'ooplh_rdbc':    'magenta',
-        'ooplh_dbc':    'magenta',
-        'ooplh_rbcsm':  'cyan',
-        'ooplh_rddsm':  'green',
-        'ooplh_mtr':    'blue',
-            }
-    try:
-        color=d[vn]
-    except:
-        color='black'
-    return color
-
-def cmap(vn):
-    d={ 'hfls':         'RdBu_r',
-        'hfss':         'RdBu_r',
-        'gflx':         'RdBu_r',
-        'fsm':          'RdBu_r',
-        'snc':          'RdBu_r',
-        'qvege':        'RdBu_r',
-        'qvegt':        'RdBu_r',
-        'qsoil':        'RdBu_r',
-        'rsfc':         'RdBu_r',
-        'lwsfc':        'RdBu_r',
-        'swsfc':        'RdBu_r',
-        'sfcWind':      'RdBu_r',
-        'ooplh':        'RdBu_r',
-        'ooplh_msm':    'RdBu_r',
-        'ooplh_fixmsm': 'RdBu_r',
-        'ooplh_fixasm': 'RdBu_r',
-        'ooplh_fixbc':  'RdBu_r',
-        'ooplh_rdbc':    'RdBu_r',
-        'ooplh_dbc':    'RdBu_r',
-        'ooplh_rnl':    'RdBu_r',
-        'ooplh_rbcsm':  'RdBu_r',
-        'ooplh_rddsm':  'RdBu_r',
-        'ooplh_mtr':    'RdBu_r',
-        'oopef':        'RdBu_r',
-        'oopef_msm':    'RdBu_r',
-        'oopef_fixmsm': 'RdBu_r',
-        'oopef_fixasm': 'RdBu_r',
-        'oopef_fixbc':  'RdBu_r',
-        'oopef_dbc':    'RdBu_r',
-        'oopef_rbcsm':  'RdBu_r',
-        'oopef_rddsm':  'RdBu_r',
-        'oopef_mtr':    'RdBu_r',
-        'tas':          'RdBu_r',
-        'huss':         'RdBu_r',
-        'hurs':         'RdBu_r',
-        'ta850':        'RdBu_r',
-        'rfa':          'RdBu_r',
-        'pblh':         'RdBu_r',
-        'wap850':       'RdBu_r',
-        'wapt850':      'RdBu_r',
-        'fa850':        'RdBu_r',
-        'fat850':       'RdBu_r',
-        'advt850_wm2':  'RdBu_r',
-        'advt850':      'RdBu_r',
-        'advt850_t18':  'RdBu_r',
-        'advtx850':     'RdBu_r',
-        'advty850':     'RdBu_r',
-        'advty850_t18': 'RdBu_r',
-        'advm850':      'RdBu_r',
-        'advmx850':     'RdBu_r',
-        'advmy850':     'RdBu_r',
-        'pr':           'BrBG',
-        'mrsos':        'BrBG',
-        'td_mrsos':     'BrBG',
-        'ti_pr':        'BrBG',
-        'ti_ev':        'BrBG',
-        'ti_ro':        'BrBG',
-        'ef':           'RdBu_r',
-        'ef2':          'RdBu_r',
-        'ef3':          'RdBu_r',
-        'oosf':         'RdBu_r',
-        'ooef':         'RdBu_r',
-        'advt850_t':    'RdBu_r',
-        'advt850_t18_t':'RdBu_r',
-        'advty850_t18_t':'RdBu_r',
-        'advt_doy850_t':'RdBu_r',
-        'adv5t_doy850_t':'RdBu_r',
-        'advty_doy850_t':'RdBu_r',
-        'advt_mon850_t': 'RdBu_r',
-        'advt_rmean850_t':'RdBu_r',
-        'gflx_t':        'RdBu_r',
-        'advt850_t_hs':  'RdBu_r',
-        'gflx_t_hs':     'RdBu_r',
-            }
-    return d[vn]
+lmd=['CESM2']
+md='CESM2'
 
 def vmax(vn):
     d={ 'hfls':         5,
@@ -284,6 +188,7 @@ def vstr(vn):
         'advty_doy850_t':    r'$a(vc_p\partial_y\overline{T})_{850}$',
         'advt_mon850_t':    r'$a(uc_p\partial_x\overline{T}+vc_p\partial_y\overline{T})_{850}$',
         'advt_rmean850_t':    r'$a(uc_p\partial_x\overline{T}+vc_p\partial_y\overline{T})_{850}$',
+        'mtr':    r'Transition regime slope',
             }
     return d[vn]
 
@@ -326,36 +231,36 @@ def plot(re):
     gr=xr.Dataset({'lat': (['lat'], cdat['lat'].data)}, {'lon': (['lon'], cdat['lon'].data)})
 
     def remap(v,gr):
+        llv=np.nan*np.ones([v.shape[0],gr['lat'].size*gr['lon'].size])
+        llv[...,lmi]=v.data
+        llv=np.reshape(llv,(v.shape[0],gr['lat'].size,gr['lon'].size))
+        return llv
+
+    def eremap(v,gr):
         llv=np.nan*np.ones([v.shape[0],v.shape[1],gr['lat'].size*gr['lon'].size])
         llv[...,lmi]=v.data
         llv=np.reshape(llv,(v.shape[0],v.shape[1],gr['lat'].size,gr['lon'].size))
         return llv
 
-    def eremap(v,gr):
-        llv=np.nan*np.ones([v.shape[0],v.shape[1],v.shape[2],gr['lat'].size*gr['lon'].size])
-        llv[...,lmi]=v.data
-        llv=np.reshape(llv,(v.shape[0],v.shape[1],v.shape[2],gr['lat'].size,gr['lon'].size))
-        return llv
-
     def regsl(v,ma):
         v=v*ma
-        v=np.reshape(v,[v.shape[0],v.shape[1],v.shape[2]*v.shape[3]])
-        kidx=~np.isnan(v).any(axis=(0,1))
+        v=np.reshape(v,[v.shape[0],v.shape[1]*v.shape[2]])
+        kidx=~np.isnan(v).any(axis=(0))
         return v[...,kidx],kidx
 
     def regsla(v,gr,ma):
         sv=np.roll(v,6,axis=0) # seasonality shifted by 6 months
-        v[:,:,gr['lat']<0,:]=sv[:,:,gr['lat']<0,:]
+        v[:,gr['lat']<0,:]=sv[:,gr['lat']<0,:]
         return regsl(v,ma)
 
     def eregsl(v,ma,kidx):
         v=v*np.moveaxis(ma[...,None],-1,0)
-        v=np.reshape(v,[v.shape[0],v.shape[1],v.shape[2],v.shape[3]*v.shape[4]])
+        v=np.reshape(v,[v.shape[0],v.shape[1],v.shape[2]*v.shape[3]])
         return v[...,kidx]
 
     def eregsla(v,gr,ma,kidx):
         sv=np.roll(v,6,axis=1) # seasonality shifted by 6 months
-        v[:,:,:,gr['lat']<0,:]=sv[:,:,:,gr['lat']<0,:]
+        v[:,:,gr['lat']<0,:]=sv[:,:,gr['lat']<0,:]
         return eregsl(v,ma,kidx)
 
     def regsl2d(v,ma,kidx):
@@ -376,17 +281,15 @@ def plot(re):
         if '_wm2' in varn: varn=varn.replace('_wm2','')
         if '_wm2' in varnp: varnp=varnp.replace('_wm2','')
         idir = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
-        return xr.open_dataarray('%s/ddpc.md.%s_%s_%s.%s.nc' % (idir,varn,his,fut,se))
+        return xr.open_dataarray('%s/d.%s_%s_%s.%s.nc' % (idir,varn,his,fut,se))
 
-    tvn1=load_vn(varn,fo1,his,px='pc')
-    ddpvn1=load_mmm(varn1,varnp)
-    pct=ddpvn1['percentile']
+    dvn1=load_mmm(varn1,varnp)
     if reverse and (varn1 in ['qvege', 'qvegt', 'qsoil', 'ti_ev','gflx','fsm','hfss','hfls','fa850','fat850','advt850_wm2','advt850','advtx850','advty850','advm850','advmx850','advmy850','rfa'] or 'ooplh' in varn1):
-        ddpvn1=-ddpvn1
-    if 'wap' in varn1: ddpvn1=ddpvn1*86400/100 # convert from Pa/s to hPa/d
-    if varn1=='pr': ddpvn1=86400*ddpvn1
-    if '_wm2' in varn1: ddpvn1=1.16*1500*ddpvn1 # rho*z850
-    if 'advt' in varn1: ddpvn1=86400*ddpvn1
+        dvn1=-dvn1
+    if 'wap' in varn1: dvn1=dvn1*86400/100 # convert from Pa/s to hPa/d
+    if varn1=='pr': dvn1=86400*dvn1
+    if '_wm2' in varn1: dvn1=1.16*1500*dvn1 # rho*z850
+    if 'advt' in varn1: dvn1=86400*dvn1
 
     # variable of interest
     odir1 = '/project/amp/miyawaki/plots/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn1)
@@ -395,40 +298,37 @@ def plot(re):
 
     def load_vn(varn,idir0):
         if '_wm2' in varn: varn=varn.replace('_wm2','')
-        ddpvne=xr.open_dataarray('%s/ddpc.md.%s_%s_%s.%s.nc' % (idir0,varn,his,fut,se))
-        if varn=='pr': ddpvne=86400*ddpvne
-        if '_wm2' in varn: ddpvne=1.16*1500*ddpvne # rho*z850
-        return ddpvne
+        dvne=xr.open_dataarray('%s/d.%s_%s_%s.%s.nc' % (idir0,varn,his,fut,se))
+        if varn=='pr': dvne=86400*dvne
+        if '_wm2' in varn: dvne=1.16*1500*dvne # rho*z850
+        return dvne
 
     # load data for each model
     def load_idir(varn,md):
         if '_wm2' in varn: varn=varn.replace('_wm2','')
         return '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
     idirs=[load_idir(varn1,md0) for md0 in lmd]
-    ddpvne=[load_vn(varn1,idir0) for idir0 in tqdm(idirs)]
-    ddpvne=xr.concat(ddpvne,'model')
+    dvne=[load_vn(varn1,idir0) for idir0 in tqdm(idirs)]
+    dvne=xr.concat(dvne,'model')
 
     # remap to lat x lon
-    tvn1=remap(tvn1,gr)
-    ddpvn1=remap(ddpvn1,gr)
-    ddpvne=eremap(ddpvne,gr)
+    dvn1=remap(dvn1,gr)
+    dvne=eremap(dvne,gr)
 
     # mask greenland and antarctica
     aagl=pickle.load(open('/project/amp/miyawaki/data/share/aa_gl/cesm2/aa_gl.pickle','rb'))
-    tvn1=tvn1*aagl
-    ddpvn1=ddpvn1*aagl
-    ddpvne=ddpvne*aagl
+    dvn1=dvn1*aagl
+    dvne=dvne*aagl
 
     [mlat,mlon] = np.meshgrid(gr['lat'], gr['lon'], indexing='ij')
     awgt=np.cos(np.deg2rad(mlat)) # area weight
 
     # make sure nans are consistent
-    nidx=np.isnan(ddpvn1)
-    for imd in range(ddpvne.shape[0]):
-        nidx=np.logical_or(np.isnan(nidx),np.isnan(ddpvne[imd,...]))
-    tvn1[nidx]=np.nan
-    ddpvn1[nidx]=np.nan
-    ddpvne[:,nidx]=np.nan
+    nidx=np.isnan(dvn1)
+    for imd in range(dvne.shape[0]):
+        nidx=np.logical_or(np.isnan(nidx),np.isnan(dvne[imd,...]))
+    dvn1[nidx]=np.nan
+    dvne[:,nidx]=np.nan
 
     ah=np.ones_like(mlat)
     if re=='tr':
@@ -441,112 +341,32 @@ def plot(re):
         ah[np.abs(gr['lat'])<=tlat]=np.nan
 
     # select region
-    ahddp1,kidx=regsla(ddpvn1,gr,ah)
-    tvn1,_=regsla(tvn1,gr,ah)
-    ahddpe=eregsla(ddpvne,gr,ah,kidx)
+    ahd1,kidx=regsla(dvn1,gr,ah)
+    ahde=eregsla(dvne,gr,ah,kidx)
     # weights
     ahw=regsl2d(awgt,ah,kidx)
 
     # area weighted mean
-    ahddpg=ahddp1.copy()
-    ahddp1=np.sum(ahw*ahddp1,axis=-1)/np.sum(ahw)
-    ahddpe=np.sum(ahw*ahddpe,axis=-1)/np.sum(ahw)
-    tvn1=np.sum(ahw*tvn1,axis=-1)/np.sum(ahw)
-
-    if bstype=='bins':
-        s=ahddp1.shape
-        # bootstrap
-        al=np.ones([s[0],s[1]])
-        for im in tqdm(range(s[0])):
-            for ib in range(s[1]):
-                sa=ahddpg[im,ib,:]
-                bs=[np.nanmean(resample(sa)) for _ in range(nbs)]
-                bs=np.array(bs)
-                pl,pu=np.percentile(bs,100*np.array([alc/2,1-alc/2]))
-                if pl<0 and pu>0: al[im,ib]=0  # 0 is inside confidence interval
-    elif bstype=='models':
-        if md=='mmm':
-            # bootstrap
-            s=ahddpe.shape
-            ahddpe=np.reshape(ahddpe,(s[0],s[1]*s[2]))
-            al=np.ones(ahddpe.shape[1])
-            for ig in tqdm(range(ahddpe.shape[1])):
-                sa=ahddpe[:,ig]
-                bs=[np.nanmean(resample(sa)) for _ in range(nbs)]
-                bs=np.array(bs)
-                pl,pu=np.percentile(bs,100*np.array([alc/2,1-alc/2]))
-                if pl<0 and pu>0: al[ig]=0  # 0 is inside confidence interval
-            al=np.reshape(al,(s[1],s[2]))
+    ahdg=ahd1.copy()
+    ahd1=np.sum(ahw*ahd1,axis=-1)/np.sum(ahw)
+    ahde=np.sum(ahw*ahde,axis=-1)/np.sum(ahw)
 
     mon=range(12)
-    [ahmmon,ahmpct] = np.meshgrid(mon,pct, indexing='ij')
-
-    # # load et regimes data
-    # varnc='cat'
-    # ddir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,'mrsos')
-    # cat=xr.open_dataarray('%s/sc.%s.%s_%s.%s.nc'%(ddir,varnc,his,fut,re))
-
-    # ann mean
-    aahddp1=np.nanmean(ahddp1,axis=0)
-    fig,ax=plt.subplots(figsize=(4,3),constrained_layout=True)
-    ax.plot(pct,aahddp1,'-k')
-    ax.set_xlabel('Percentile')
-    ax.set_ylabel('$\Delta\delta$ %s (%s)'%(varnlb(varn1),unitlb(varn1)))
-    ax.set_title('%s ANN'%tstr)
-    fig.savefig('%s/ann.%s.%s%s.ah.pct.sign.%s.png'%(odir1,varn1,fo,fstr,re),format='png',dpi=600)
 
     # plot gp vs seasonal cycle of varn1 PCOLORMESH
     fig=plt.figure(figsize=fs)
     divider=Divider(fig, (0, 0, 1, 1), h, v, aspect=False)
     ax=fig.add_axes(divider.get_position(),axes_locator=divider.new_locator(nx=1, ny=1))
-    clf=ax.pcolormesh(ahmmon,ahmpct,ahddp1,vmin=-vmax(varn1),vmax=vmax(varn1),cmap=cmap(varn1))
-    if bstype=='bins' or md=='mmm':
-        hatch=plt.fill_between([-0.5,11.5],0,100,hatch='///////',color='none',edgecolor='gray',linewidths=0.3)
-        ax.pcolormesh(ahmmon,ahmpct,np.ma.masked_where(al==0,ahddp1),vmin=-vmax(varn1),vmax=vmax(varn1),cmap=cmap(varn1))
-    # ax.contour(ahmmon,ahmpct,tvn1,[273.15])
-    # ax.set_title()
-    ax.text(0.5,1.05,tstr,c=ct(varn1),ha='center',va='center',transform=ax.transAxes)
+    clf=ax.plot(mon,ahd1)
+    ax.text(0.5,1.05,tstr,ha='center',va='center',transform=ax.transAxes)
     ax.xaxis.set_minor_locator(MultipleLocator(1))
     ax.set_xticks(np.arange(1,11+2,2))
     ax.set_xticklabels(np.arange(2,12+2,2))
-    ax.set_yticks(100*np.arange(0,1+0.2,0.2))
+    # ax.set_yticks(100*np.arange(0,1+0.2,0.2))
     # ax.set_xticklabels(np.arange(2,12+2,2))
-    if ylb:
-        ax.set_ylabel('Percentile')
-    else:
-        ax.set_yticklabels([])
-    if not xlb:
-        ax.set_xticklabels([])
     ax.set_xlim([-0.5,11.5])
-    ax.set_ylim([0,100])
-    # if 'ooplh'==varnp or varn1 in ['td_mrsos','ti_pr','ti_ev','ti_ro']:
-    #     # clf=ax.pcolormesh(ahmmon,ahmpct,ahc,vmin=0,vmax=vmax(varnc),cmap='Pastel1')
-    #     x=np.arange(12)
-    #     y=mppai
-    #     z=cat
-    #     # make dense grid
-    #     scale=100
-    #     yy=ndimage.zoom(y,scale,order=0)
-    #     zz=ndimage.zoom(z,scale,order=0)
-    #     xx=np.linspace(x.min(),x.max(),zz.shape[0])
-    #     # extend out to edge
-    #     xx=np.insert(xx,0,-0.5)
-    #     yy=np.insert(yy,0,0)
-    #     zz=np.insert(zz,0,zz[0,:],axis=0)
-    #     zz=np.insert(zz,0,zz[:,0],axis=1)
-    #     xx=np.append(xx,12.5)
-    #     yy=np.append(yy,1)
-    #     zz=np.insert(zz,-1,zz[-1,:],axis=0)
-    #     zz=np.insert(zz,-1,zz[:,-1],axis=1)
-    #     ax.contour(xx,yy,np.transpose(zz),levels=[0,1,2],vmin=0,vmax=9,cmap='Pastel1',linewidths=1,corner_mask=False)
-    if showcb:
-        cb=plt.colorbar(clf,cax=fig.add_axes([(pds[0]+axs[0]+0.15)/fs[0],pds[1]/fs[1],0.1/fs[0],axs[1]/fs[1]]))
-        if titleoverride:
-            cb.set_label('%s'%(unitlb(varn1)))
-        else:
-            cb.set_label('$\Delta\delta %s$ (%s)'%(varnlb(varn1),unitlb(varn1)))
-    fig.savefig('%s/sc.%s.%s%s.ah.pct.sign.%s.md.png' % (odir1,varn1,fo,fstr,re), format='png', dpi=600,backend='pgf')
-    fig.savefig('%s/sc.%s.%s%s.ah.pct.sign.%s.md.pdf' % (odir1,varn1,fo,fstr,re), format='pdf', dpi=600,backend='pgf')
+    fig.savefig('%s/sc.%s.%s%s.ah.noperc.%s.png' % (odir1,varn1,fo,fstr,re), format='png', dpi=600,backend='pgf')
+    fig.savefig('%s/sc.%s.%s%s.ah.noperc.%s.pdf' % (odir1,varn1,fo,fstr,re), format='pdf', dpi=600,backend='pgf')
 
 [plot(re) for re in tqdm(lre)]
 

@@ -16,12 +16,14 @@ varn='tas' # input1
 ty='2d'
 checkexist=False
 
-fo = 'historical' # forcing (e.g., ssp245)
-byr=[1980,2000]
+mgen='cmip6'
+# fo = 'historical' # forcing (e.g., ssp245)
+# byr=[1950,1980]
 
-# fo = 'ssp370' # forcing (e.g., ssp245)
+fo = 'ssp370' # forcing (e.g., ssp245)
 # byr='gwl2.0'
 # dyr=10
+byr=[2070,2100]
 
 freq='day'
 se='sc'
@@ -37,10 +39,10 @@ lmd=mods(fo) # create list of ensemble members
 
 def calc_pvn(md):
     ens=emem(md)
-    grd=grid(md)
+    grd=grid(md,mgen)
 
-    idir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
-    odir='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
+    idir='/project/amp02/miyawaki/data/p004/%s/%s/%s/%s/%s' % (mgen,se,fo,md,varn)
+    odir='/project/amp02/miyawaki/data/p004/%s/%s/%s/%s/%s' % (mgen,se,fo,md,varn)
     if not os.path.exists(odir):
         os.makedirs(odir)
 
@@ -58,7 +60,7 @@ def calc_pvn(md):
     vn=ds[varn]
 
     if 'gwl' in byr:
-        idirg='/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % ('ts','historical+%s'%fo,md,'tas')
+        idirg='/project/amp02/miyawaki/data/p004/%s/%s/%s/%s/%s' % (mgen,'ts','historical+%s'%fo,md,'tas')
         [ygwl,gwl]=pickle.load(open('%s/gwl%s.%s.pickle' % (idirg,'tas','ts'),'rb'))
         idx=np.where(gwl==float(byr[-3:]))
         if ygwl[idx]==1850:

@@ -15,22 +15,21 @@ from concurrent.futures import ProcessPoolExecutor as Pool
 
 # ld=np.concatenate((np.arange(20,80+20,20),np.arange(150,850+100,100)))
 # lvn=['mrso%g'%d for d in ld] # input1
-lvn=['gflx']
+lvn=['advtsurf']
 ty='2d'
 checkexist=False
 only95=False
 
-fo = 'historical' # forcing (e.g., ssp245)
-byr=[1980,2000]
+# fo = 'historical' # forcing (e.g., ssp245)
+# byr=[1980,2000]
 
-# fo = 'ssp370' # forcing (e.g., ssp245)
-# byr='gwl2.0'
-# dyr=10
+fo = 'ssp370' # forcing (e.g., ssp245)
+byr='gwl2.0'
+dyr=10
 
 se='sc'
 
 lmd=mods(fo) # create list of ensemble members
-lmd=lmd[6:]
 
 def calc_p(md):
     ens=emem(md)
@@ -168,7 +167,7 @@ def calc_p(md):
         print('\n Done.')
 
 if __name__=='__main__':
-    calc_p('KACE-1-0-G')
+    calc_p('UKESM1-0-LL')
     # [calc_p(md) for md in tqdm(lmd)]
 
 # if __name__=='__main__':

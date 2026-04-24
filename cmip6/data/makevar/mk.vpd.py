@@ -11,7 +11,7 @@ import xesmf as xe
 import xarray as xr
 import constants as c
 from tqdm import tqdm
-from cmip6util import mods,simu,emem
+from util import mods,simu,emem
 from glade_utils import grid
 # from metpy.calc import saturation_mixing_ratio,specific_humidity_from_mixing_ratio
 # from metpy.units import units
@@ -20,11 +20,9 @@ from glade_utils import grid
 
 varn='vpd'
 
+mgen = 'cmip6'
 fo = 'historical' # forcing (e.g., ssp245)
-byr=[1980,2000]
-
 # fo = 'ssp370' # forcing (e.g., ssp245)
-# byr=[2080,2100]
 
 freq='day'
 
@@ -37,13 +35,13 @@ def q2e(p,q):
 
 def calc_vpd(md):
     ens=emem(md)
-    grd=grid(fo,cl,md)
+    grd=grid(md, mgen)
 
     odir='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,varn,md,ens,grd)
     if not os.path.exists(odir):
         os.makedirs(odir)
 
-    idir0='/project/mojave/cmip6/%s/%s/%s/%s/%s/%s' % (fo,'Amon','ps',md,ens,grd)
+    idir0='/project/cmip6/%s/%s/%s/%s/%s/%s' % (fo,'Amon','ps',md,ens,grd)
     ds = xr.open_mfdataset('%s/*.nc'%idir0)
     ps = ds['ps'].load()
     ps=ps.resample(time='1D').interpolate('linear')
@@ -53,7 +51,7 @@ def calc_vpd(md):
     if md=='IPSL-CM6A-LR':
         idir0='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,'huss',md,ens,grd)
     else:
-        idir0='/project/mojave/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,'huss',md,ens,grd)
+        idir0='/project/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,'huss',md,ens,grd)
     idir1='/project/amp02/miyawaki/data/share/cmip6/%s/%s/%s/%s/%s/%s' % (fo,freq,'shuss',md,ens,grd)
     for _,_,files in os.walk(idir0):
         for fn in files:
@@ -72,7 +70,7 @@ def calc_vpd(md):
             vpd=vpd.rename(varn)
             vpd.to_netcdf('%s/%s'%(odir,fn.replace('huss',varn,1)))
 
-calc_vpd('IPSL-CM6A-LR')
+calc_vpd('CESM2')
 
 # if __name__ == '__main__':
 #     with ProgressBar():

@@ -2,94 +2,43 @@ import os
 import sys
 sys.path.append('../../data/')
 sys.path.append('/home/miyawaki/scripts/common')
-import dask
-from dask.diagnostics import ProgressBar
-from dask.distributed import Client
-import dask.multiprocessing
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 import pickle
 import numpy as np
 import xarray as xr
-import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from scipy.stats import linregress
 from tqdm import tqdm
 from util import mods
 from utils import monname
 
-lvn=['ooplh_rnl'] # input1
+# lvn=['tas'] # input1
+# lvn=['ta_advtsurf'] # input1
+lvn=['advtsurf.ctas.d3'] # input1
 se = 'sc' # season (ann, djf, mam, jja, son)
 
 mgen='cmip6'
 fo1='historical' # forcings 
-fo2='ssp370' # forcings 
-fo='%s-%s'%(fo2,fo1)
-# his='1950-1980'
-# fut='2070-2100'
 his='1980-2000'
+# his='1950-1980'
+
+fo2='ssp370' # forcings 
 fut='gwl2.0'
+# fut='2070-2100'
+
+# fo2='ssp585' # forcings 
+# fut='2070-2100'
+
+fo='%s-%s'%(fo2,fo1)
 
 lmd=mods(fo1)
+lmd.remove('NorESM2-LM')
+lmd.remove('NorESM2-MM')
+lmd.remove('TaiESM1')
 
 # lmd=['MIROC6','IPSL-CM6A-LR','EC-Earth3','MPI-ESM1-2-LR','KACE-1-0-G','MRI-ESM2-0','CanESM5','MIROC-ES2L','MPI-ESM1-2-HR','ACCESS-CM2']
-# lmd.remove('EC-Earth3')
+# lmd=['ACCESS-CM2','MPI-ESM1-2-HR','CanESM5','KACE-1-0-G','MPI-ESM1-2-LR','EC-Earth3','MIROC6']
 # lmd=['CanESM2','CNRM-CM5','CSIRO-Mk3-6-0','inmcm4','MPI-ESM-LR','MPI-ESM-MR']
 
 def calc_mmm(varn):
-    if varn=='ooplh_fixbc':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_dbc':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_rnl':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_rdbc':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_rbcsm':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_rddsm':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_msm':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_fixmsm':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_fixasm':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_mtr':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='ooplh_mtr':
-        varn0='ooplh'
-        varnp='plh'
-    elif varn=='plh_fixbc':
-        varn0='plh'
-    elif varn=='oopef_fixbc':
-        varn0='oopef'
-        varnp='pef'
-    elif varn=='oopef_fixmsm':
-        varn0='oopef'
-        varnp='pef'
-    elif varn=='oopef_rddsm':
-        varn0='oopef'
-        varnp='pef'
-    elif varn=='oopef3_fixbc':
-        varn0='oopef3'
-        varnp='pef3'
-    elif varn=='pef_fixbc':
-        varn0='pef'
-    else:
-        varn0=varn
+    varn0=varn
 
     for i,md in enumerate(tqdm(lmd)):
         print(md)
@@ -103,28 +52,30 @@ def calc_mmm(varn):
         dt={}
 
         # prc conditioned on temp
-        pvn1=xr.open_dataarray('%s/pc.%s_%s.%s.nc' % (idir1,varn0,his,se))
-        pvn2=xr.open_dataarray('%s/pc.%s_%s.%s.nc' % (idir2,varn,fut,se))
+        pvn1=xr.open_dataarray('%s/ssc.%s_%s.%s.nc' % (idir1,varn0,his,se))
+        pvn2=xr.open_dataarray('%s/ssc.%s_%s.%s.nc' % (idir2,varn,fut,se))
 
         # warming
-        mvn1=1/2*(pvn1.sel(percentile=[47.5]).data+pvn1.sel(percentile=[52.5]).data)
-        mvn2=1/2*(pvn2.sel(percentile=[47.5]).data+pvn2.sel(percentile=[52.5]).data)
-        de1=pvn1-mvn1
-        de2=pvn2-mvn2
+        mvn1=pvn1.sel(stat=['mean'])
+        mvn2=pvn2.sel(stat=['mean'])
+        pvn1=pvn1.drop_sel(stat='mean')
+        pvn2=pvn2.drop_sel(stat='mean')
+        de1=pvn1-mvn1.data
+        de2=pvn2-mvn2.data
         dpvn=pvn2-pvn1
         ddpvn=de2-de1
-        mvn1=xr.DataArray(mvn1.squeeze(),coords={'month':pvn1['month'],'gpi':pvn1['gpi']},dims=('month','gpi'))
-        mvn2=xr.DataArray(mvn2.squeeze(),coords={'month':pvn2['month'],'gpi':pvn2['gpi']},dims=('month','gpi'))
+        # mvn1=xr.DataArray(mvn1.squeeze(),coords={'season':pvn1['season'],'gpi':pvn1['gpi']},dims=('season','gpi'))
+        # mvn2=xr.DataArray(mvn2.squeeze(),coords={'season':pvn2['season'],'gpi':pvn2['gpi']},dims=('season','gpi'))
         dmvn=mvn2-mvn1
         print(np.nanmax(ddpvn.data.flatten()))
         print(np.nanmin(ddpvn.data.flatten()))
 
         # save individual model data
-        mvn1.to_netcdf('%s/md.%s_%s.%s.nc' % (idir1,varn,his,se))
-        mvn2.to_netcdf('%s/md.%s_%s.%s.nc' % (idir2,varn,fut,se))
-        dmvn.to_netcdf('%s/d.md.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
-        dpvn.to_netcdf('%s/dpc.md.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
-        ddpvn.to_netcdf('%s/ddpc.md.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
+        mvn1.to_netcdf('%s/avg.%s_%s.%s.nc' % (idir1,varn,his,se))
+        mvn2.to_netcdf('%s/avg.%s_%s.%s.nc' % (idir2,varn,fut,se))
+        dmvn.to_netcdf('%s/d.avg.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
+        dpvn.to_netcdf('%s/dpc.avg.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
+        ddpvn.to_netcdf('%s/ddpc.avg.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
 
         if i==0:
             imvn1=np.empty(np.insert(np.asarray(mvn1.shape),0,len(lmd)))
@@ -190,23 +141,23 @@ def calc_mmm(varn):
     if not os.path.exists(odir):
         os.makedirs(odir)
 
-    mmvn1.to_netcdf('%s/md.%s_%s.%s.nc' % (odir1,varn,his,se))
-    smvn1.to_netcdf('%s/std.md.%s_%s.%s.nc' % (odir1,varn,his,se))
-    mmvn2.to_netcdf('%s/md.%s_%s.%s.nc' % (odir2,varn,fut,se))
-    smvn2.to_netcdf('%s/std.md.%s_%s.%s.nc' % (odir2,varn,fut,se))
+    mmvn1.to_netcdf('%s/avg.%s_%s.%s.nc' % (odir1,varn,his,se))
+    smvn1.to_netcdf('%s/std.avg.%s_%s.%s.nc' % (odir1,varn,his,se))
+    mmvn2.to_netcdf('%s/avg.%s_%s.%s.nc' % (odir2,varn,fut,se))
+    smvn2.to_netcdf('%s/std.avg.%s_%s.%s.nc' % (odir2,varn,fut,se))
 
     mpvn1.to_netcdf('%s/pc.%s_%s.%s.nc' % (odir1,varn,his,se))
     spvn1.to_netcdf('%s/std.pc.%s_%s.%s.nc' % (odir1,varn,his,se))
     mpvn2.to_netcdf('%s/pc.%s_%s.%s.nc' % (odir2,varn,fut,se))
     spvn2.to_netcdf('%s/std.pc.%s_%s.%s.nc' % (odir2,varn,fut,se))
 
-    mdmvn.to_netcdf('%s/d.md.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
-    sdmvn.to_netcdf('%s/std.d.md.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
+    mdmvn.to_netcdf('%s/d.avg.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
+    sdmvn.to_netcdf('%s/std.d.avg.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
 
-    mdpvn.to_netcdf('%s/dpc.md.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
-    sdpvn.to_netcdf('%s/std.dpc.md.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
+    mdpvn.to_netcdf('%s/dpc.avg.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
+    sdpvn.to_netcdf('%s/std.dpc.avg.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
 
-    mddpvn.to_netcdf('%s/ddpc.md.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
-    sddpvn.to_netcdf('%s/std.ddpc.md.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
+    mddpvn.to_netcdf('%s/ddpc.avg.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
+    sddpvn.to_netcdf('%s/std.ddpc.avg.%s_%s_%s.%s.nc' % (odir,varn,his,fut,se))
 
 [calc_mmm(vn) for vn in lvn]

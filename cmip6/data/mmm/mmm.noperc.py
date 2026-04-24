@@ -14,7 +14,7 @@ from util import mods
 from utils import monname
 
 nt=7 # window size in days
-varn='csm'
+varn='mtr'
 se = 'sc' # season (ann, djf, mam, jja, son)
 fo1='historical' # forcings 
 fo2='ssp370' # forcings 
@@ -23,16 +23,20 @@ his='1980-2000'
 # fut='2080-2100'
 fut='gwl2.0'
 
+mgen = 'cmip6'
 lmd=mods(fo1)
 
 for i,md in enumerate(tqdm(lmd)):
-    idir1 = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo1,md,varn)
-    idir2 = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo2,md,varn)
+    idir1 = f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo1}/{md}/{varn}'
+    idir2 = f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo2}/{md}/{varn}'
+    odir0 = f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo}/{md}/{varn}'
+    if not os.path.exists(odir0):
+        os.makedirs(odir0)
 
     c = 0
     dt={}
 
-    # load csm
+    # load varn
     ds1=xr.open_dataset('%s/%s.%s.%s.nc' % (idir1,varn,his,se))
     try:
         vn1=ds1[varn]
@@ -48,6 +52,8 @@ for i,md in enumerate(tqdm(lmd)):
     dvn=vn2-vn1
 
     # save individual model data
+    dvn.to_netcdf('%s/d.%s_%s_%s.%s.nc' % (odir0,varn,his,fut,se))
+
     if i==0:
         ivn1=np.empty(np.insert(np.asarray(vn1.shape),0,len(lmd)))
         ivn2=np.empty(np.insert(np.asarray(vn2.shape),0,len(lmd)))
@@ -78,9 +84,9 @@ svn2.data=np.nanstd(ivn2,axis=0)
 sdvn.data=np.nanstd(idvn,axis=0)
 
 # save mmm and std
-odir1 = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo1,'mmm',varn)
-odir2 = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo2,'mmm',varn)
-odir = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,'mmm',varn)
+odir1 = f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo1}/mmm/{varn}'
+odir2 = f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo2}/mmm/{varn}'
+odir =  f'/project/amp02/miyawaki/data/p004/{mgen}/{se}/{fo}/mmm/{varn}'
 if not os.path.exists(odir1):
     os.makedirs(odir1)
 if not os.path.exists(odir2):

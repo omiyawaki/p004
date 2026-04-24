@@ -20,7 +20,7 @@ from utils import monname,varnlb,unitlb
 from mpl_toolkits.axes_grid1 import Divider,Size
 
 nbs=int(1e2) # number of bootstrap resamples
-lre=['hl'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
+lre=['tr'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
 bstype='bins' # bootstrap by mmm bin samples or multimodel samples of bin means
 tlat=30 # latitude bound for tropics
 plat=50 # midlatitude bound
@@ -45,8 +45,8 @@ v=[Size.Fixed(pds[1]), Size.Fixed(axs[1])]
 
 p=2.5 # percentile
 varn='tas'
-varn1='wap850'
-varnp='wap850'
+varn1='sfcWind'
+varnp='sfcWind'
 reverse=True
 se = 'sc' # season (ann, djf, mam, jja, son)
 fo1='historical' # forcings 
@@ -100,10 +100,12 @@ def cmap(vn):
         'oopef_rbcsm':  'RdBu_r',
         'oopef_rddsm':  'RdBu_r',
         'oopef_mtr':    'RdBu_r',
+        'sfcWind':      'RdBu_r',
         'tas':          'RdBu_r',
         'ta850':        'RdBu_r',
         'fa850':        'RdBu_r',
         'advt850':      'RdBu_r',
+        'ta_advtsurf':  'RdBu_r',
         'wap850':       'RdBu_r',
         'pr':           'BrBG',
         'mrsos':        'BrBG',
@@ -124,6 +126,7 @@ def vmax(vn):
         'hfss':         5,
         'gflx':         5,
         'rsfc':         5,
+        'sfcWind':      0.1,
         'ooplh':        5,
         'ooplh_msm':    5,
         'ooplh_fixmsm': 5,
@@ -136,7 +139,8 @@ def vmax(vn):
         'fa850':        1,
         'tas':          1,
         'ta850':        1,
-        'advt850':      0.01,
+        'advt850':      20,
+        'ta_advtsurf':  2,
         'wap850' :      1,
         'pr':           1,
         'mrsos':        1,
@@ -171,6 +175,7 @@ def vstr(vn):
         'oopef_rbcsm':  r'(a)$-$(b)$-$(c)',
         'oopef_rddsm':  r'(b)$-$(c)',
         'oopef_dbc':    r'$SM_{hist}$',
+        'sfcWind':      r'$U_{10\,m}$',
         'mrsos':        r'$SM$',
         'td_mrsos':     r'$SM_{\mathrm{30\,d}}$',
         'ti_pr':        r'$P_{\mathrm{30\,d}}$',
@@ -180,7 +185,8 @@ def vstr(vn):
         'ta850':        r'$T_{850}$',
         'fa850':        r'$\nabla\cdot F_{a,\,850}$',
         'wap850':       r'$\omega_{850}$',
-        'advt850':      r'$-(uc_p\partial_xT+vc_p\partial_yT)_{850}$',
+        'advt850':      r'$-(u\partial_xT+v\partial_yT)_{850}$',
+        'ta_advtsurf':  r'$-(u\partial_xT+v\partial_yT)^{3\,d}_{BOT}$',
             }
     return d[vn]
 
@@ -270,7 +276,7 @@ def plot(re):
 
     def load_mmm(varn,varnp):
         idir = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
-        ds=xr.open_dataset('%s/dpc.%s_%s_%s.%s.nc' % (idir,varn,his,fut,se))
+        ds=xr.open_dataset('%s/dpc.md.%s_%s_%s.%s.nc' % (idir,varn,his,fut,se))
         ddpvn=ds[varnp]
         ddpvn.data=ddpvn.data-np.mean(ddpvn.data,axis=(0,1),keepdims=True)
         pct=ds['percentile']
@@ -284,6 +290,8 @@ def plot(re):
         ddpvn1=-ddpvn1
     if 'wap' in varn1:
         ddpvn1=ddpvn1*86400/100 # convert from Pa/s to hPa/d
+    if 'advt' in varn1:
+        ddpvn1=ddpvn1*86400
 
     # variable of interest
     odir1 = '/project/amp/miyawaki/plots/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn1)
@@ -291,7 +299,7 @@ def plot(re):
         os.makedirs(odir1)
 
     def load_vn(idir0):
-        ddpvne=xr.open_dataarray('%s/dpc.%s_%s_%s.%s.nc' % (idir0,varn1,his,fut,se))
+        ddpvne=xr.open_dataarray('%s/dpc.md.%s_%s_%s.%s.nc' % (idir0,varn1,his,fut,se))
         ddpvne.data=ddpvne.data-np.mean(ddpvne.data,axis=(0,1),keepdims=True)
         if varn1=='pr': ddpvne=86400*ddpvne
         return ddpvne

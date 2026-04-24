@@ -17,9 +17,9 @@ from utils import monname,varnlb,unitlb
 
 nt=7 # window size in days
 p=97.5
-lvn=['ooplh_rdbc']
+lvn=['ooplh']
 vnp= 'ooplh'
-reverse=False
+reverse=True
 nhhl=False
 af=False
 tr=True

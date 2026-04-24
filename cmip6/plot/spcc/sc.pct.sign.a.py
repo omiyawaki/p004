@@ -21,7 +21,7 @@ from mpl_toolkits.axes_grid1 import Divider,Size
 
 nbs=int(1e2) # number of bootstrap resamples
 # lre=['et','tr'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
-lre=['ml','hl'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
+lre=['tr'] # tr=tropics, ml=midlatitudes, hl=high lat, et=extratropics
 bstype='bins' # bootstrap by mmm bin samples or multimodel samples of bin means
 tlat=30 # latitude bound for tropics
 plat=60 # midlatitude bound
@@ -37,7 +37,7 @@ title=True
 xlb=True
 ylboverride=True
 cboverride=True
-titleoverride=False
+titleoverride=True
 fs=(3.5,3)
 pds=(1,0.5)
 axs=(1.5,2)
@@ -46,8 +46,8 @@ v=[Size.Fixed(pds[1]), Size.Fixed(axs[1])]
 
 p=2.5 # percentile
 varn='tas'
-varn1='pblh'
-varnp='pblh'
+varn1='sfcWind'
+varnp='sfcWind'
 reverse=True
 se = 'sc' # season (ann, djf, mam, jja, son)
 fo1='historical' # forcings 
@@ -58,11 +58,11 @@ his='1980-2000'
 fut='gwl2.0'
 skip507599=True
 
-# lmd=mods(fo1)
-# md='mmm'
+lmd=mods(fo1)
+md='mmm'
 
-lmd=['CESM2']
-md='CESM2'
+# lmd=['CESM2']
+# md='CESM2'
 
 def ct(vn):
     d={ 
@@ -86,6 +86,7 @@ def cmap(vn):
         'hfss':         'RdBu_r',
         'gflx':         'RdBu_r',
         'rsfc':         'RdBu_r',
+        'sfcWind':      'RdBu_r',
         'ooplh':        'RdBu_r',
         'ooplh_msm':    'RdBu_r',
         'ooplh_fixmsm': 'RdBu_r',
@@ -130,6 +131,7 @@ def vmax(vn):
         'hfss':         5,
         'gflx':         5,
         'rsfc':         5,
+        'sfcWind':      0.1,
         'ooplh':        5,
         'ooplh_msm':    5,
         'ooplh_fixmsm': 5,
@@ -169,7 +171,8 @@ def vstr(vn):
         'ooplh_fixbc':  r'$BC_{hist}$',
         'ooplh_dbc':    r'$SM_{hist}$',
         'ooplh_rbcsm':  r'(a)$-$(b)$-$(c)',
-        'ooplh_rddsm':  r'(b)$-$(c)',
+        # 'ooplh_rddsm':  r'(b)$-$(c)',
+        'ooplh_rddsm':  r'$BC_{hist}$, $\Delta\delta SM$ Contrib',
         'ooplh_fixmsm': r'$BC_{hist}$, $\Delta\delta SM=0$',
         'ooplh_fixasm': r'$BC_{hist}$, $\Delta\delta SM=0$',
         'ooplh_mtr':    r'$\frac{\mathrm{d}LH}{\mathrm{d}SM}_{hist}\Delta SM$',
@@ -180,6 +183,7 @@ def vstr(vn):
         'oopef_rddsm':  r'(b)$-$(c)',
         'oopef_dbc':    r'$SM_{hist}$',
         'mrsos':        r'$SM$',
+        'sfcWind':      r'$U_{10\,m}$',
         'td_mrsos':     r'$SM_{\mathrm{30\,d}}$',
         'ti_pr':        r'$P_{\mathrm{30\,d}}$',
         'ti_ev':        r'$-E_{\mathrm{30\,d}}$',
@@ -280,7 +284,7 @@ def plot(re):
 
     def load_mmm(varn,varnp):
         idir = '/project/amp02/miyawaki/data/p004/cmip6/%s/%s/%s/%s' % (se,fo,md,varn)
-        ds=xr.open_dataset('%s/dpc.%s_%s_%s.%s.nc' % (idir,varn,his,fut,se))
+        ds=xr.open_dataset('%s/dpc.md.%s_%s_%s.%s.nc' % (idir,varn,his,fut,se))
         ddpvn=ds[varnp]
         pct=ds['percentile']
         gpi=ds['gpi']
@@ -301,7 +305,7 @@ def plot(re):
         os.makedirs(odir1)
 
     def load_vn(idir0):
-        ddpvne=xr.open_dataarray('%s/dpc.%s_%s_%s.%s.nc' % (idir0,varn1,his,fut,se))
+        ddpvne=xr.open_dataarray('%s/dpc.md.%s_%s_%s.%s.nc' % (idir0,varn1,his,fut,se))
         if varn1=='pr': ddpvne=86400*ddpvne
         return ddpvne
 
