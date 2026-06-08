@@ -36,3 +36,59 @@ PRs should include changed paths, scientific/technical rationale, commands run, 
 
 ## Data & Output Hygiene
 Do not commit generated artifacts or HPC logs (`*.nc`, `*.pickle`, `*.pdf`, `*.png`, `*.o*`, `*.e*`). Keep large products in `/project/...` paths referenced by scripts.
+
+# External-Facing Prose Registry
+
+Projects with editable prose must keep a `.prose-files.json` registry at the
+project root. Register prose files when they are created or first edited, using
+paths relative to the project root.
+
+Use this schema:
+
+```json
+{
+  "version": 1,
+  "files": {
+    "path/to/file.md": {
+      "audience": "external",
+      "description": "Short description of the audience and purpose",
+      "proofread": {
+        "sha256": "current-file-sha256-after-proofreading",
+        "by": "proofreader subagent",
+        "date": "YYYY-MM-DD",
+        "notes": "Brief record of what was checked"
+      }
+    },
+    "notes/internal-context.md": {
+      "audience": "internal",
+      "description": "Private notes for Osamu and agents"
+    }
+  }
+}
+```
+
+Classify a file as `external` if the intended reader is someone other than
+Osamu or the agent. Examples include authors, editors, students, collaborators,
+department colleagues, grant reviewers, public readers, and future applicants.
+Draft status does not make a file internal. If the file is being prepared for
+someone else to read, it is external-facing.
+
+Classify a file as `internal` only when it is private working context: notes,
+scratch drafts, extracted paper text, local plans, analysis logs, agent
+instructions, or implementation documentation meant for Osamu and agents.
+
+Before finishing a turn that creates or edits an external-facing prose file,
+spawn a proofreader subagent. The proofreader should read the changed file, the
+nearest `AGENTS.md` or `CLAUDE.md`, the writing-style files, and any
+file-specific instructions. Ask it to flag concrete issues in voice, clarity,
+audience fit, correctness, and compliance with the relevant instructions. Do
+not ask it to rewrite wholesale. Apply needed edits, then update the registry's
+`proofread.sha256` to the current file hash. On macOS, compute it with:
+
+```bash
+shasum -a 256 path/to/file
+```
+
+If several external-facing files are part of the same deliverable, one
+proofreader subagent can review them together as long as the registry records a
+current hash for each file.
