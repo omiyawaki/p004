@@ -97,7 +97,7 @@ The mega-workflow blew the monthly budget in one phase. Switched to small inline
 - [ ] **Chunk 4 — inputs** (`rg.p.cond.py`, `rg.p.py`, `rg.m.py`, `mk.csm.py`): hot-day percentile & mean construction.
 - [ ] **Chunk 5 — aggregation** (`mmm.p.cond.dsm.py`): finish; resolve the csm subtraction (F1).
 - [ ] **Chunk 6 — conventions + figures** (`util.py`, `decomp.*.mmm.lh.py`).
-- [ ] **External — `etregimes.bestfit`** (not in repo; see F3): the actual fit engine. Highest offset-relevance; needs the source.
+- [x] **External — `etregimes.bestfit`** (retrieved from Derecho 2026-06-20; see F5–F9): the segmented-regression fit engine — AUDITED.
 
 ## Chunk 1 findings (2026-06-20)
 
@@ -133,6 +133,61 @@ The mega-workflow blew the monthly budget in one phase. Switched to small inline
   dimensionally odd — revisit in Chunk 5 (recall it cancels in the plotted Δδ).
 - Failed fits → `bc=None`, `csm/mtr=NaN` (`mk.bc.dsm.py:88-89`); check how `mk.oo.plh.py` handles
   `None` curves in Chunk 2.
+
+## External fit-engine findings — `etregimes.bestfit` (2026-06-20)
+
+Source: `derecho:/glade/u/home/miyawaki/scripts/common/etregimes.py` (16 KB, dated 2024-03-06;
+"Based on Qin Kong's modified ET regime script, Hsu's method"). Snapshot pulled to `/tmp` for this
+session; line numbers below are 1-based on the source. `mk.bc.dsm.py:84` calls
+`f1,f2=bestfit(SM_anom, LH)` and keeps **`f2` = the BIC-selected** model (`bc=f2['line']`,
+`csm=f2['xc']`, `mtr=f2['mt']`).
+
+How it works: `bestfit` fits 9 candidate segmented-linear shapes (`fit1111…fit0001`) to the
+(SM-anomaly, LH) points via `scipy.optimize.curve_fit`, then picks the min-AIC and min-BIC model.
+Each shape yields a critical SM (`xc`, the water→energy transition) and a transitional slope (`mt`).
+
+### F5 — the curve is fit UNWEIGHTED to ALL days of the month, not to hot days [HIGH — likely bears on the offset]
+- `curve_fit` in every `fitNNNN` uses ordinary (unweighted) least squares; there is **no density or
+  percentile weighting** anywhere in `bestfit`. `mk.bc.dsm.py:bcmon` feeds it *all* daily
+  (SM-anom, LH) pairs for that month.
+- The BC reconstruction (`ooplh`) then evaluates this all-day curve at the hot-day SM to predict
+  hot-day LH (evaluation step to be confirmed in Chunk 2). So BC assumes the hot-day LH–SM relation
+  is the same curve as the all-day relation. If the hot/dry tail departs from the bulk relation
+  (hysteresis, VPD, depleted SM), BC will **systematically miss hot-day LH → a structural source of
+  the Actual-vs-BC offset.** This is a framework-design limitation, not a coding bug, and is the
+  leading candidate for "why BC under-explains." (Tellingly, the abandoned prototype
+  `rgr.lh.sm.wgtlogi.one.py` *did* weight by density — weighting was considered and dropped.)
+- Implication for the project decision: if confirmed, the offset is partly inherent to fitting an
+  all-day curve. A hot-day-conditioned or density/tail-weighted fit is the natural "iterate" path
+  before concluding the BC framework itself is inadequate.
+
+### F6 — one failing sub-model discards the whole gridpoint [MEDIUM, robustness]
+- `bestfit:399` fits all 9 shapes in a single list comprehension with no per-model try/except. If any
+  one `curve_fit` raises (non-convergence, degenerate bounds), the exception propagates out of
+  `bestfit`, and `mk.bc.dsm.py:88` catches it with a bare `except: bc.append(None)` — discarding the
+  **entire** gridpoint's BC even when other shapes fit fine. This can systematically drop
+  hard-to-fit (often dry/hot) gridpoints, biasing coverage of the BC maps. Fix: wrap each `runfit`
+  so a single shape's failure is skipped, not fatal.
+
+### F7 — `fit0110` mislabels its type as `'1100'` [COSMETIC]
+- `etregimes.py:116` returns `'type':'1100'` inside `fit0110` (copy-paste). The `type` field is unused
+  downstream (selection is by AIC/BIC; `mk.bc` reads only `xc`/`mt`/`line`), so no numeric impact —
+  but it corrupts any per-shape bookkeeping/diagnostics keyed on `type`.
+
+### F8 — the "x0<x1" breakpoint-ordering issue is only partly handled [LOW/EDGE]
+- Header comment (line 8) flags it; 3- and 4-segment fits sort the node arrays before `np.interp`
+  (`Xnew=...argsort`). But `curve_fit` can still return breakpoints out of order, in which case the
+  AIC/BIC is computed on a sorted-node interpolation that differs from the actual fitted piecewise
+  function. Affects a minority of gridpoints; worth a guard.
+
+### F9 — outlier removal is disabled [LOW, confirm intent]
+- `runfit:389` has `# sm,lf=remove_outlier(sm,lf)` commented out, so Kong's LH-jump>50 outlier filter
+  never runs. May be deliberate; flag to confirm whether high-LH outliers should be trimmed before
+  fitting.
+
+**Net on the offset:** no single coding bug here forces the offset, but **F5 is a strong structural
+explanation** — the BC curve is an all-day, unweighted fit applied to hot days. Confirm the
+evaluation in Chunk 2, then this becomes the central "iterate the method" lever.
 
 ## Resume plan
 
