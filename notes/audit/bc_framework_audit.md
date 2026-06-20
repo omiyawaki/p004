@@ -295,6 +295,23 @@ If a tail-weighted, properly-extrapolated SM-only curve still leaves a large off
 is fundamental (hot-day LH is not a function of SM alone) → add a second predictor (VPD/Rn) or change
 framework. That is the clean RETHINK signal.
 
+## Phase 2 — ERA5 observational pipeline (Figure 1 benchmark) — CLEAN (2026-06-20)
+Audited `era5/data/tseries/pct.py`, `tseries/trend.py`, `distribution/pct_t2m.py`. The
+trend(T50)/trend(T95)/ratio chain is correct: per-year percentiles via `np.percentile` (linear interp,
+matches CMIP6), then per-gridpoint OLS (`scipy.stats.linregress`) of each percentile vs. year.
+- **E1** [low]: `pct.py:23` uses `lyr=list(set(vn['time.year']))` — arbitrary (hash) order. NOT a
+  correctness bug because the `year` coordinate is stored alongside the data and `linregress` is
+  order-independent, but fragile; prefer `sorted(set(...))`.
+- **E2** [note]: DJF is grouped by calendar year (Dec(Y) with Jan/Feb(Y), not the meteorological
+  winter). Standard simplification; affects only DJF/seasonal-spanning, not the JJA+annual main text.
+- **E3** [dedup]: `distribution/pct_t2m.py` is a legacy gridded route writing to a different path
+  (`hist_hotdays/era5`) than the `era5/ts/tas` consumed by `trend.py`; likely superseded by
+  `tseries/pct.py`.
+
+### Phase 2 remaining (not yet audited)
+cesm2-sf (forcing attribution, Fig 4), cesm2-le, cesm2-cmip, gpcp/ceres (hydroclimate context),
+the rest of `cmip6/data/` (other conditioned variables, kde/smbasis/correlation), and all plot scripts.
+
 ## Resume plan
 
 1. Raise the monthly limit (claude.ai/settings/usage) or wait for the reset.
