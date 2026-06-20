@@ -308,9 +308,37 @@ matches CMIP6), then per-gridpoint OLS (`scipy.stats.linregress`) of each percen
   (`hist_hotdays/era5`) than the `era5/ts/tas` consumed by `trend.py`; likely superseded by
   `tseries/pct.py`.
 
+## Phase 2 — CESM2-SF forcing attribution (Figure 4) — CLEAN (2026-06-20)
+Audited `cesm2-sf/data/climate_change/diff_hotdays.py`, `sfutil.py`. Per-member percentile warming
+`dt2m = ht2m1 − ht2m0`, then correct ensemble stats (mean/median/IQR/range) per percentile. One file
+per percentile (`diff_<pc>.pickle`); the ratio is formed in the plot layer. Notes (not bugs): the
+`fut=='2000-2014'` branch loads both periods from the `his` directory because 2000-2014 is inside the
+historical LENS run; `emem` gives 15 members for ghg/aaer, 50 for lens, 3 for xaaer; the triple-nested
+ensemble loop is slow but correct.
+
 ### Phase 2 remaining (not yet audited)
-cesm2-sf (forcing attribution, Fig 4), cesm2-le, cesm2-cmip, gpcp/ceres (hydroclimate context),
-the rest of `cmip6/data/` (other conditioned variables, kde/smbasis/correlation), and all plot scripts.
+cesm2-le, cesm2-cmip, gpcp (precip percentiles), the rest of `cmip6/data/` (other conditioned
+variables, kde/smbasis/correlation), and all plot scripts (mostly visualization; main offset-relevant
+plotting already covered via the decomp figures, F2).
+
+## Phase 2 — CERES+GPCP hydroclimate regimes (Figure 5) — one bug (2026-06-20)
+Audited `ceres+gpcp/data/masks/ai1_regimes.py`, `climatology/clmean_ai1.py`. Aridity-index time-mean
+is correct; the 7-regime classification (Takeshima et al. 2020) partitions the AI axis cleanly with no
+overlap/gap, and the `pr*86400` mm/d conversion is right.
+- **G1** [low-med]: `ai1_regimes.py:30` `hr=np.empty_like(ai)` is uninitialized; NaN/ocean cells match
+  none of the `np.where` regime masks, so they keep garbage values rather than NaN. Fix:
+  `hr=np.full_like(ai, np.nan)`. Low impact if ocean is masked downstream, but a real latent bug.
+
+## Coverage summary (2026-06-20)
+Audited by hand, all main-figure pipelines:
+- **Fig 1 (ERA5 obs trend):** clean (E1–E3 minor).
+- **Fig 2 (CMIP6 warming/ratio):** percentile/composite/MMM machinery audited via the BC chain (clean;
+  the BC-specific `ddpc` is Phase 1).
+- **Fig 3 (process-space / BC mechanism):** Phase 1 — offset is structural (F5/F10), plus F6/F12/F1/F7/F11.
+- **Fig 4 (CESM2-SF attribution):** clean.
+- **Fig 5 (hydroclimate regimes):** clean except G1.
+Not yet audited (lower stakes): cesm2-le, cesm2-cmip, gpcp precip percentiles, other `cmip6/data`
+conditioned variables (kde/smbasis/correlation), and the ~490 plot scripts.
 
 ## Resume plan
 
