@@ -87,6 +87,53 @@ Off-path families (safe to ignore when auditing the plotted decomposition):
 (Full 69-entry list with per-file reasons is in the workflow output:
 `tasks/w8v3phg4h.output`.)
 
+## Chunk plan & progress (incremental, done by hand in the main loop)
+
+The mega-workflow blew the monthly budget in one phase. Switched to small inline chunks.
+
+- [x] **Chunk 1 — LH–SM curve fit** (`mk.bc.dsm.py`, `rgr.lh.sm.wgtlogi.one.py`) — see F3/F4 below.
+- [ ] **Chunk 2 — curve evaluation → `ooplh`** (`mk.oo.plh.py`): how BC_all is reconstructed; extrapolation beyond observed SM; handling of failed fits (`bc=None`).
+- [ ] **Chunk 3 — decomposition algebra** (`mk.oo.plh.{fixbc,dbc,fixmsm,rddsm,rbcsm}.py`): do the terms partition?
+- [ ] **Chunk 4 — inputs** (`rg.p.cond.py`, `rg.p.py`, `rg.m.py`, `mk.csm.py`): hot-day percentile & mean construction.
+- [ ] **Chunk 5 — aggregation** (`mmm.p.cond.dsm.py`): finish; resolve the csm subtraction (F1).
+- [ ] **Chunk 6 — conventions + figures** (`util.py`, `decomp.*.mmm.lh.py`).
+- [ ] **External — `etregimes.bestfit`** (not in repo; see F3): the actual fit engine. Highest offset-relevance; needs the source.
+
+## Chunk 1 findings (2026-06-20)
+
+### F3 — the production Budyko-curve fit (`etregimes.bestfit`) is NOT in this repo [HIGH / scope-blocking]
+- `mk.bc.dsm.py:17` does `from etregimes import bestfit`; the per-(month,gpi) curve is fit by
+  `bestfit(nvn2, nvn1)` at line 84, returning the curve (`line`), the critical SM (`xc`→saved as
+  `csm`), and the slope (`mt`→saved as `mtr`).
+- `etregimes` lives in `/home/miyawaki/scripts/common` (not in the checkout); **60+ scripts** across
+  `plh/`, `pef/`, `smbasis/` import `bestfit`. So the single most offset-relevant code — the fit form,
+  the water/energy-limited breakpoint detection, the slope, and extrapolation behavior — **cannot be
+  audited locally.** A bug in `bestfit` (e.g., wrong breakpoint, biased slope, bad extrapolation) would
+  produce a systematic Actual-vs-BC offset and would be invisible from this repo.
+- Other shared modules also absent (lesser blind spots): `glade_utils`, `cmip6util`, `util`, `utils`,
+  `constants`, `regions`.
+- **Action:** copy `etregimes.py` (and ideally the other `common/` modules) into the repo or share it,
+  so `bestfit` can be audited. This is now the highest-priority next step for the offset question.
+
+### F4 — `rgr.lh.sm.wgtlogi.one.py` is a broken, off-path prototype [LOW]
+- It is a single hardcoded-location diagnostic (`iloc=[110,85]`), NOT the production fit (production =
+  `etregimes.bestfit`). The tracer mis-listed it as canonical.
+- It cannot run: `cl` is used at lines 54, 60, 61, 72 but never assigned → `NameError`.
+- Ambiguous weighting: primary fit uses `sigma=pdf**(1/3)` (down-weights dense points); the fallback
+  uses `sigma=pdf**(-1)` (opposite). Worth confirming intended direction IF this prototype is ever
+  revived — but it is off the production path, so low priority.
+
+### Chunk-1 notes (not bugs; confirm intent later)
+- SM anomaly fed to the curve is `mrsos − mean(mrsos)` over the **annual** historical period
+  (`mk.bc.dsm.py:67`), not the per-month climatology (the monthly version is commented out at line 66).
+  Combined with per-month fitting, the SM seasonal cycle is retained in the "anomaly." Internally
+  consistent across hist/future (future uses the historical annual mean), but a methodological choice.
+- `csm` = critical soil moisture (the Budyko breakpoint `xc`), saved per (month, gpi). This is the same
+  `csm` the aggregator subtracts (F1); subtracting a critical-SM from an LH field (`ooplh`) is
+  dimensionally odd — revisit in Chunk 5 (recall it cancels in the plotted Δδ).
+- Failed fits → `bc=None`, `csm/mtr=NaN` (`mk.bc.dsm.py:88-89`); check how `mk.oo.plh.py` handles
+  `None` curves in Chunk 2.
+
 ## Resume plan
 
 1. Raise the monthly limit (claude.ai/settings/usage) or wait for the reset.
