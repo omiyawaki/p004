@@ -92,11 +92,13 @@ Off-path families (safe to ignore when auditing the plotted decomposition):
 The mega-workflow blew the monthly budget in one phase. Switched to small inline chunks.
 
 - [x] **Chunk 1 — LH–SM curve fit** (`mk.bc.dsm.py`, `rgr.lh.sm.wgtlogi.one.py`) — see F3/F4 below.
-- [ ] **Chunk 2 — curve evaluation → `ooplh`** (`mk.oo.plh.py`): how BC_all is reconstructed; extrapolation beyond observed SM; handling of failed fits (`bc=None`).
-- [ ] **Chunk 3 — decomposition algebra** (`mk.oo.plh.{fixbc,dbc,fixmsm,rddsm,rbcsm}.py`): do the terms partition?
-- [ ] **Chunk 4 — inputs** (`rg.p.cond.py`, `rg.p.py`, `rg.m.py`, `mk.csm.py`): hot-day percentile & mean construction.
-- [ ] **Chunk 5 — aggregation** (`mmm.p.cond.dsm.py`): finish; resolve the csm subtraction (F1).
-- [ ] **Chunk 6 — conventions + figures** (`util.py`, `decomp.*.mmm.lh.py`).
+- [x] **Chunk 2 — curve evaluation → `ooplh`** (`mk.oo.plh.py`): F5 confirmed; F10 (np.interp clamping).
+- [x] **Chunk 3 — decomposition algebra** (`mk.oo.plh.{fixbc,dbc,fixmsm,rddsm,rbcsm}.py`): terms partition EXACTLY (closure passes).
+- [x] **Chunk 4 — inputs** (`rg.p.cond.py`, `rg.p.py`, `rg.m.py`, `mk.csm.py`): percentile/composite CLEAN; `mk.csm.py` → F12.
+- [x] **Chunk 5 — aggregation** (`mmm.p.cond.dsm.py`): F1 (csm cancels in Δδ); chain understood end-to-end.
+- [x] **Chunk 6 — conventions + figures** (`util.py` clean; `decomp.*.mmm.lh.py` → F2).
+
+**Phase 1 (BC crux) is COMPLETE — full canonical chain audited by hand. Verdict below.**
 - [x] **External — `etregimes.bestfit`** (retrieved from Derecho 2026-06-20; see F5–F9): the segmented-regression fit engine — AUDITED.
 
 ## Chunk 1 findings (2026-06-20)
@@ -188,6 +190,110 @@ Each shape yields a critical SM (`xc`, the water→energy transition) and a tran
 **Net on the offset:** no single coding bug here forces the offset, but **F5 is a strong structural
 explanation** — the BC curve is an all-day, unweighted fit applied to hot days. Confirm the
 evaluation in Chunk 2, then this becomes the central "iterate the method" lever.
+
+## Chunk 2 findings — `mk.oo.plh.py` (ooplh = BC_all) (2026-06-20)
+
+### F5 CONFIRMED — BC reconstructs hot-day LH from the all-day curve at hot-day SM
+- `eval_bc(sm,bc)=np.interp(sm,bc[0],bc[1])` (line 70-71); `calc_plh` loads hot-day percentile SM
+  (`pc.mrsos`), de-means it (`sm-sm0.mean('time')`, line 94), and evaluates the per-(month,gpi)
+  curve at it. So `ooplh = curve(hot-day SM)`. The curve is the all-day, unweighted fit (F5). The
+  offset `Actual − ooplh` is whatever hot-day LH variation is **not a function of SM** — confirmed
+  structural, as argued in F5.
+
+### F10 — `np.interp` CLAMPS beyond the historical SM range (no extrapolation) [HIGH, offset-relevant]
+- The curve nodes `bc[0]` span the *historical* all-day SM range (`SM.min()..SM.max()` from
+  `mk.bc.dsm.py`). `np.interp` returns the endpoint value for inputs outside `[xp[0],xp[-1]]`.
+- Under warming/drying, future hot-day SM anomaly often falls **below** the historical `SM.min()`,
+  so BC **clamps** hot-day LH to the driest-historical value rather than continuing the curve down.
+  This biases BC systematically in the dry/hot tail — precisely where the offset is largest. It is a
+  defensible "don't extrapolate" choice, but it has real, asymmetric consequences for the future hot
+  tail and is a concrete contributor to the Actual-vs-BC offset (distinct from, and on top of, F5).
+
+## Chunk 3 findings — decomposition algebra (`fixbc/dbc/fixmsm/rddsm/rbcsm`) (2026-06-20)
+
+### Algebra closure — PASSES (the prime offset suspect is cleared)
+Verified each term's construction from the scripts, then summed by hand:
+- `ooplh` (BC_all)       = `curve_fo(sm_fo)`              (run for hist and fut)
+- `ooplh_fixbc` (BC_hist)= `curve_hist(sm_fut)`           (hist curve, future SM) — `get_bc(md,fo0,byr0)`
+- `ooplh_dbc` (ΔBC)      = `curve_fut(sm_hist)`           (future curve, hist SM) — loads `mrsos(fo0)`
+- `ooplh_rbcsm` (Resid)  = `2·lh0 + lhf − lhfbc − lhfsm`  (lhfsm here = `ooplh_dbc`)
+Then **Δfixbc + Δdbc + Δrbcsm = curve_fut(sm_fut) − curve_hist(sm_hist) = Δooplh, exactly.** The
+second figure's split (`fixmsm`/`rddsm`) likewise closes: `Δrddsm = Δfixbc − Δfixmsm` (the
+hot-day-specific ΔδSM effect), with `fixmsm = curve_hist(sm_hist + Δmean_SM)`.
+**Conclusion: the offset is not a decomposition-closure bug.** The terms are exact by construction
+(`rbcsm` is literally defined as the interaction residual). The offset lives in `Actual − BC_all`.
+
+### F11 — misleading variable name in `mk.oo.plh.rbcsm.py` [COSMETIC]
+- Line 63 loads `ooplh_dbc` into a variable named `lhfsm` (suggesting "fixed sm"); the arithmetic is
+  correct, but the name invites misreading. Rename to `lhdbc`.
+
+## Chunk 4/5/6 spot-findings (2026-06-20)
+
+### F12 — `mk.csm.py` fits on RAW soil moisture; `mk.bc.dsm.py` fits on the SM ANOMALY [MEDIUM, confirm]
+- `mk.csm.py:70-73` has the SM-anomaly step **commented out**, so `bestfit` runs on raw `mrsos` and
+  the saved critical SM (`csm=f2['xc']`) is in **raw-SM** units. `mk.bc.dsm.py` fits on `mrsos −
+  mean` and its `xc` is in **anomaly** units. Two `csm` products in different coordinates. If the
+  aggregator's `csm` subtraction (F1) ever used the raw-units one against anomaly-based fields, it
+  would be inconsistent — though recall it cancels in the plotted Δδ (F1). Confirm which `csm`
+  feeds which consumer.
+
+### `util.py` — clean
+- `mods('historical')` returns exactly the 15 models in the manuscript table (incl. CESM2
+  `r11i1p1f1`, UKESM1-0-LL `r9i1p1f2` via `emem`). No correctness issue; only a duplicated docstring
+  line in `simu` (cosmetic).
+
+## Chunk 4 findings — inputs (`rg.p.py`, `rg.p.cond.py`, `rg.m.py`) — CLEAN (2026-06-20)
+- `rg.p.py`: tas percentile thresholds via `np.nanpercentile` per month/gpi over the year window. Correct.
+- `rg.p.cond.py`: the hot-day composite. tas-percentile edges `[0,5,…,95,100]` → 20 bin-center
+  outputs `[2.5,…,97.5]`; `bin_below`/`bin_betwn`/`bin_above` fill all 20 bins with no off-by-one and
+  no double-fill (checked the `ip==0` / `ip==len-1` branches). `pc.mrsos` = mean SM on days whose tas
+  falls in each bin; the hottest bin (≥p95) is the hot-day SM that feeds BC. Correct.
+- `rg.m.py`: monthly-mean climatology (`groupby('time.month').mean`). Correct (cosmetic typo
+  "colldsect" line 19). Year window `>=byr[0]` & `<byr[1]` matches `rg.p.py`/`rg.p.cond.py` (so
+  "1980-2000" = 1980–1999, applied consistently everywhere).
+- **Net: the hot-day definition and the SM-on-hot-days composite are correct.** The offset is not an
+  input/binning artifact.
+
+---
+
+## AUDIT VERDICT — Phase 1 / BC crux (2026-06-20)
+
+**Question:** is the BC framework's weak explanatory power (the Actual-vs-BC `ΔδLH` offset) a genuine
+limitation, or an implementation bug?
+
+**Answer: it is NOT an implementation bug. The offset is structural, from two design choices in the
+method itself.** Every load-bearing computational step is correct: the hot-day percentile/composite
+inputs (Chunk 4), the per-(month,gpi) segmented fit engine `etregimes.bestfit` (sound; AIC/BIC form
+correct), the curve evaluation (Chunk 2), and the decomposition algebra, which **closes exactly**
+— `Δfixbc + Δdbc + Δrbcsm = Δooplh` by construction (Chunk 3). The one undefined-variable bug in the
+aggregator (F1) cancels in the plotted Δδ.
+
+**The two structural sources of the offset:**
+1. **F5 — BC predicts LH from soil moisture alone, via a curve fit to ALL days unweighted.** Any
+   hot-day LH signal orthogonal to SM (VPD, net radiation, SM-hysteresis on hot days) is
+   unrepresentable. This is the explanatory-power ceiling.
+2. **F10 — `np.interp` clamps beyond the historical SM range.** Future hot/dry days below the
+   historical `SM.min()` get a flat (clamped) LH instead of an extrapolated one, biasing the future
+   dry tail where the offset is largest.
+
+**Real but non-causal bugs to fix (do not explain the offset):**
+- **F6** [med]: in `bestfit`, one sub-model's non-convergence throws and `mk.bc.dsm.py`'s bare
+  `except` discards the whole gridpoint (`bc=None`) → coverage gaps biased toward hard-to-fit
+  dry/hot cells. Fix: per-model try/except.
+- **F12** [med]: `mk.csm.py` fits raw SM, `mk.bc.dsm.py` fits SM-anomaly → two `csm` products in
+  different coordinates; confirm which feeds which consumer.
+- **F1** [low]: `mmm.p.cond.dsm.py` undefined `csm1`/`csm2` (cancels in Δδ; corrupts non-Δδ products).
+- **F7/F11** [cosmetic]: `fit0110` mislabels `type='1100'`; `rbcsm` names the dbc term `lhfsm`.
+
+**Decision support — rethink vs. iterate:** there is a concrete ITERATE path to try before concluding
+the framework is inadequate:
+1. Weight the fit toward the hot/dry tail, or fit a hot-day-conditioned curve (the abandoned
+   `wgtlogi` prototype already weighted by density).
+2. Replace the `np.interp` clamp with a controlled extrapolation in the water-limited regime (F10).
+3. Fix F6 so dry/hot gridpoints are not silently dropped.
+If a tail-weighted, properly-extrapolated SM-only curve still leaves a large offset, the limitation
+is fundamental (hot-day LH is not a function of SM alone) → add a second predictor (VPD/Rn) or change
+framework. That is the clean RETHINK signal.
 
 ## Resume plan
 
