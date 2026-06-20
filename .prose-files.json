@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "files": {
+    "notes/audit/bc_framework_audit.md": {
+      "audience": "internal",
+      "description": "Internal analysis log for Osamu and agents: Phase 1 BC-framework correctness-audit findings, canonical-vs-off-path file map, and resume plan."
+    }
+  }
+}
