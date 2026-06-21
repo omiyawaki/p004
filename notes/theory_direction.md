@@ -88,8 +88,41 @@ positioning + a definite test); each layer is added only where the simpler one f
 interpretable); failure maps are results; replaces "fit a curve" with "test a theory, then add physics
 where it is insufficient."
 
+## Novelty check — prior art (2026-06-21)
+
+Verdict: testing whether the thermodynamic amplification theory explains the **SEASONAL CYCLE** of
+amplified hot-day warming (and extending beyond the tropics) appears **unclaimed** — but the check
+reframed the citation anchor and surfaced one paper to differentiate against.
+
+- **Byrne (2021)** — thermodynamic "drier get hotter" theory; **annual, tropical aggregate**. The root,
+  but not the right anchor on its own.
+- **Duan, McKinnon & Simpson (2024)**, *J. Climate*, "Two Perspectives on Amplified Warming over
+  Tropical Land" (`glean: Duan2024Two`; **McKinnon & Simpson are p004 coauthors**). They **already
+  unify** the atmospheric (Byrne) and land-surface (SEB / soil-moisture) perspectives into one
+  linearized perturbation model: warming ∝ inverse of a base-climate "partition factor" (temperature
+  vs humidity partitioning of the energy/flux) — drier base climate → higher "base-climate
+  sensitivity" → more warming; changes in the partition factor further enhance/dampen; they link the
+  lower-tropospheric lapse rate (atmospheric) to surface fluxes (land). **Tropical land, annual (no
+  seasonal cycle — confirm by full read).** This effectively pre-does the project's Layer-0↔Layer-1
+  unification ⇒ **adopt their framework; the open frontier is SEASONALITY + extratropics.**
+- **Song et al. (2025)**, *Nat Comms*, "Hot season gets hotter due to rainfall delay over tropical
+  land." Seasonal, and ties hot-season warming to hot-percentile amplification — but via a
+  **rainfall/monsoon-delay + soil-moisture-feedback** mechanism, Amazon-focused; *not* the
+  thermodynamic theory. **Differentiate**: theory-test vs mechanism; global/extratropical vs Amazon.
+- Related coauthor work to read: `Duan2023Coherent` (tropical land hydroclimate patterns),
+  `Duan2025Impact` (soil preconditioning of heatwaves).
+
+**Refined plan:** collapse Layer 0 (Byrne) + Layer 1 (SEB) into the **Duan et al. (2024) unified
+base-climate-sensitivity model**, then (novel) **apply it across the SEASONAL CYCLE and beyond
+20°S–20°N**; the season×region map of where it holds vs fails is the contribution, with extratropical
+winter (advection + snow) as the residual Layer 2.
+
 ## 4. Immediate next steps
 
+0. **CRITICAL (do first) — read `Duan2024Two` (Duan, McKinnon & Simpson 2024) in full** (it is in the
+   library): confirm it is annual-only, adopt its unified base-climate-sensitivity perturbation model
+   as the project's framework, and extract its variables/inputs. Then skim `Duan2023Coherent` and
+   `Duan2025Impact` for the coauthors' latest framing. (See Novelty-check section above.)
 1. ~~Retrieve Byrne~~ **DONE 2026-06-21** — read in full; faithful methodology digest in
    `notes/byrne2021_methodology.md`. It is Byrne **2021** (*Nat Geo*), not 2022. Load-bearing
    assumption `δh_L(p)=δh_O(p)` (convection + WTG) ⇒ tropics-only; the gridpoint/extratropical test
