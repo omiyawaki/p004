@@ -89,10 +89,12 @@ where it is insufficient."
 
 ## 4. Immediate next steps
 
-1. **Retrieve Byrne** (the foundational one I know is Byrne 2021, *Nature Geoscience*, "Amplified
-   warming of extreme temperatures over tropical land"; confirm whether Osamu means a specific 2022
-   paper / follow-up). Extract: exact governing equation(s), assumptions, and the list of required
-   input variables. Likely already in the `glean` library.
+1. ~~Retrieve Byrne~~ **DONE 2026-06-21** — read in full; faithful methodology digest in
+   `notes/byrne2021_methodology.md`. It is Byrne **2021** (*Nat Geo*), not 2022. Load-bearing
+   assumption `δh_L(p)=δh_O(p)` (convection + WTG) ⇒ tropics-only; the gridpoint/extratropical test
+   replaces the ocean reference with the **local free-tropospheric temperature**. Byrne already
+   validated gridpoint *percentile* computation, so the novelty is applying the *theory* pointwise and
+   beyond 20°S–20°N.
 2. **Inventory inputs** vs what we already have as products (T percentiles ✓; near-surface q / RH;
    free-tropospheric T e.g. T500 / moist-adiabat reference; ocean / tropical-mean warming reference).
 3. **Draft the gridpoint test methodology** (predicted vs simulated `ΔδT` per gridpoint/season; skill maps;

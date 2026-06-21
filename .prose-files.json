@@ -8,6 +8,10 @@
     "notes/theory_direction.md": {
       "audience": "internal",
       "description": "Internal working notes: first-principles research direction — critique of the empirical Budyko fit, the surface-energy-balance / Penman-Monteith amplification framing, and the layered plan starting from Byrne's thermodynamic theory tested gridpoint-wise and beyond the tropics."
+    },
+    "notes/byrne2021_methodology.md": {
+      "audience": "internal",
+      "description": "Internal methodology digest of Byrne (2021, Nat Geo) amplified hot-day warming theory: equations, assumptions, data method, and implications for testing it gridpoint-wise and beyond the tropics."
     }
   }
 }
