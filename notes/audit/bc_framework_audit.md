@@ -159,9 +159,10 @@ Each shape yields a critical SM (`xc`, the water→energy transition) and a tran
   the Actual-vs-BC offset.** This is a framework-design limitation, not a coding bug, and is the
   leading candidate for "why BC under-explains." (Tellingly, the abandoned prototype
   `rgr.lh.sm.wgtlogi.one.py` *did* weight by density — weighting was considered and dropped.)
-- Implication for the project decision: if confirmed, the offset is partly inherent to fitting an
-  all-day curve. A hot-day-conditioned or density/tail-weighted fit is the natural "iterate" path
-  before concluding the BC framework itself is inadequate.
+- Implication (REVISED 2026-06-21): the all-day curve is the INTENDED design — BC must predict hot AND
+  mean days from one curve, since amplification is their difference. The offset is therefore the
+  meaningful residual, NOT something to remove by hot-day-weighting (that is circular and breaks the
+  hot−mean difference). See the revised Decision-support section below.
 
 ### F6 — one failing sub-model discards the whole gridpoint [MEDIUM, robustness]
 - `bestfit:399` fits all 9 shapes in a single list comprehension with no per-model try/except. If any
@@ -285,15 +286,26 @@ aggregator (F1) cancels in the plotted Δδ.
 - **F1** [low]: `mmm.p.cond.dsm.py` undefined `csm1`/`csm2` (cancels in Δδ; corrupts non-Δδ products).
 - **F7/F11** [cosmetic]: `fit0110` mislabels `type='1100'`; `rbcsm` names the dbc term `lhfsm`.
 
-**Decision support — rethink vs. iterate:** there is a concrete ITERATE path to try before concluding
-the framework is inadequate:
-1. Weight the fit toward the hot/dry tail, or fit a hot-day-conditioned curve (the abandoned
-   `wgtlogi` prototype already weighted by density).
-2. Replace the `np.interp` clamp with a controlled extrapolation in the water-limited regime (F10).
-3. Fix F6 so dry/hot gridpoints are not silently dropped.
-If a tail-weighted, properly-extrapolated SM-only curve still leaves a large offset, the limitation
-is fundamental (hot-day LH is not a function of SM alone) → add a second predictor (VPD/Rn) or change
-framework. That is the clean RETHINK signal.
+**Decision support (REVISED 2026-06-21 per Osamu's framing):** The all-day, SM-only curve is
+INTENTIONAL. Amplification is `ΔδLH = ΔLH_hot − ΔLH_mean`, so BC must predict BOTH hot and mean days
+from ONE general curve. Therefore do NOT weight the fit toward hot days or fit a hot-day-conditioned
+curve: it (a) cannot produce / degrades the mean term — self-defeating, since the reported quantity is
+the difference — and (b) makes the test circular (fitting the curve to the hot-day data it is meant to
+explain). **The offset is the MEANINGFUL RESIDUAL: the share of amplification a general SM-only model
+cannot reproduce — a result, not a defect to tune away.**
+
+Legitimate paths that respect both constraints:
+1. Attribute the offset as the residual. The `dbc` term already attributes part of it to the curve
+   shifting; the remainder is the orthogonal-to-SM signal.
+2. To shrink it without breaking the framing: generalize the PREDICTORS — an all-day fit of LH on SM
+   AND a second variable (VPD or Rn), applied identically to hot and mean days. This is the real
+   RETHINK lever.
+3. Genuine bugs to fix regardless (do not touch the framework's generality): **F6** (coverage holes);
+   confirm **F10** is minor/defensible (clamping may be the right conservative choice) and **F12/F1**.
+
+NOT a lever: re-weighting toward hot days. (The abandoned `wgtlogi` prototype's `pdf^(1/3)` weighting
+actually *balanced* SM-range coverage by down-weighting the wet bulk — a faithful-general-fit concern,
+not hot-day specialization; defensible but risks overfitting the sparse dry tail.)
 
 ## Phase 2 — ERA5 observational pipeline (Figure 1 benchmark) — CLEAN (2026-06-20)
 Audited `era5/data/tseries/pct.py`, `tseries/trend.py`, `distribution/pct_t2m.py`. The
