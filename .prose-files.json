@@ -4,6 +4,10 @@
     "notes/audit/bc_framework_audit.md": {
       "audience": "internal",
       "description": "Internal analysis log for Osamu and agents: Phase 1 BC-framework correctness-audit findings, canonical-vs-off-path file map, and resume plan."
+    },
+    "notes/theory_direction.md": {
+      "audience": "internal",
+      "description": "Internal working notes: first-principles research direction — critique of the empirical Budyko fit, the surface-energy-balance / Penman-Monteith amplification framing, and the layered plan starting from Byrne's thermodynamic theory tested gridpoint-wise and beyond the tropics."
     }
   }
 }
