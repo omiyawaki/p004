@@ -102,9 +102,13 @@ reframed the citation anchor and surfaced one paper to differentiate against.
   linearized perturbation model: warming ∝ inverse of a base-climate "partition factor" (temperature
   vs humidity partitioning of the energy/flux) — drier base climate → higher "base-climate
   sensitivity" → more warming; changes in the partition factor further enhance/dampen; they link the
-  lower-tropospheric lapse rate (atmospheric) to surface fluxes (land). **Tropical land, annual (no
-  seasonal cycle — confirm by full read).** This effectively pre-does the project's Layer-0↔Layer-1
-  unification ⇒ **adopt their framework; the open frontier is SEASONALITY + extratropics.**
+  lower-tropospheric lapse rate (atmospheric) to surface fluxes (land). **Read in full —
+  `notes/duan2024_methodology.md`. It is DIAGNOSTIC, not predictive** (their words: "instead of making
+  predictions"), over **warm-season days in an SM×AI dryness phase space, tropical land 30°S–30°N — NOT
+  a seasonal-cycle analysis.** It pre-does the Layer-0↔Layer-1 *unification* diagnostically; adopt their
+  decomposition. Open frontiers: (a) the SEASONAL CYCLE, (b) extratropics, (c) testing simple
+  *predictive* models (Byrne is predictive on the atmospheric side; the land side has only diagnostics
+  plus candidate predictors SFE / idealized BC).
 - **Song et al. (2025)**, *Nat Comms*, "Hot season gets hotter due to rainfall delay over tropical
   land." Seasonal, and ties hot-season warming to hot-percentile amplification — but via a
   **rainfall/monsoon-delay + soil-moisture-feedback** mechanism, Amazon-focused; *not* the
@@ -112,10 +116,13 @@ reframed the citation anchor and surfaced one paper to differentiate against.
 - Related coauthor work to read: `Duan2023Coherent` (tropical land hydroclimate patterns),
   `Duan2025Impact` (soil preconditioning of heatwaves).
 
-**Refined plan:** collapse Layer 0 (Byrne) + Layer 1 (SEB) into the **Duan et al. (2024) unified
-base-climate-sensitivity model**, then (novel) **apply it across the SEASONAL CYCLE and beyond
-20°S–20°N**; the season×region map of where it holds vs fails is the contribution, with extratropical
-winter (advection + snow) as the residual Layer 2.
+**Refined plan (2026-06-21):** Duan et al. (2024) already give the *diagnostic* unification of the two
+perspectives. The novel contribution is **testing the limits of simple *predictive* models for the
+SEASONAL CYCLE of amplified hot-day warming, gridpoint and globally** — Byrne's thermodynamic constraint
+(predictive on the atmospheric side) and candidate simple land predictors (SFE; idealized BC), using
+Duan's decomposition as the diagnostic frame. Map where the simple predictors hold (tropics / convective
+season) vs fail (extratropics / winter → Layer 2 advection + snow). The failure boundaries are the
+science. (Aligns with Osamu's "test the limits of simple models.")
 
 ## 4. Immediate next steps
 

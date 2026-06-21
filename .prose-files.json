@@ -12,6 +12,10 @@
     "notes/byrne2021_methodology.md": {
       "audience": "internal",
       "description": "Internal methodology digest of Byrne (2021, Nat Geo) amplified hot-day warming theory: equations, assumptions, data method, and implications for testing it gridpoint-wise and beyond the tropics."
+    },
+    "notes/duan2024_methodology.md": {
+      "audience": "internal",
+      "description": "Internal methodology digest of Duan, McKinnon & Simpson (2024, J Climate) 'Two Perspectives on Amplified Warming over Tropical Land': the diagnostic (not predictive) unification of the atmospheric and surface-flux views, and what it means for testing simple predictive models seasonally."
     }
   }
 }
