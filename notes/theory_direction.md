@@ -65,7 +65,8 @@ decline in land near-surface relative humidity; the RH decline amplifies hot-day
 the test — see §4. Do not build on recollection.)*
 - Test: apply Byrne's predicted `ΔδT` gridpoint-wise across CMIP6 and compare to simulated `ΔδT`
   (we already have the percentile-warming products: `warming_t50`, `warming_t95`, the `ΔδT` maps).
-  Per gridpoint, per season: predicted vs simulated, skill maps.
+  **Novel axis = SEASON** (Byrne is annual-only): apply the theory per season/month and ask whether it
+  reproduces the simulated *seasonal cycle* of `ΔδT`. Gridpoint-resolved skill maps, per season.
 - Expectation: works in the tropics / WTG / convectively-coupled regions; breaks where BL–FT convective
   coupling fails (extratropics, baroclinic/advective regions, winter). The **breakdown map is itself a
   result.**
@@ -92,9 +93,11 @@ where it is insufficient."
 1. ~~Retrieve Byrne~~ **DONE 2026-06-21** — read in full; faithful methodology digest in
    `notes/byrne2021_methodology.md`. It is Byrne **2021** (*Nat Geo*), not 2022. Load-bearing
    assumption `δh_L(p)=δh_O(p)` (convection + WTG) ⇒ tropics-only; the gridpoint/extratropical test
-   replaces the ocean reference with the **local free-tropospheric temperature**. Byrne already
-   validated gridpoint *percentile* computation, so the novelty is applying the *theory* pointwise and
-   beyond 20°S–20°N.
+   replaces the ocean reference with the **local free-tropospheric temperature**. **The novel axis is
+   SEASONALITY (corrected 2026-06-21): Byrne pools all days into annual percentiles, so whether the
+   theory explains the SEASONAL CYCLE of amplification — this project's namesake — is untested.**
+   Byrne already validated gridpoint *percentile* computation, so gridpoint is the natural resolution,
+   not the contribution.
 2. **Inventory inputs** vs what we already have as products (T percentiles ✓; near-surface q / RH;
    free-tropospheric T e.g. T500 / moist-adiabat reference; ocean / tropical-mean warming reference).
 3. **Draft the gridpoint test methodology** (predicted vs simulated `ΔδT` per gridpoint/season; skill maps;

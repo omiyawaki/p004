@@ -93,6 +93,8 @@ warming. The `Δh` + `δr_L` terms combine into a total land-RH component (eqs 2
   vs ssp245 2080–2100.
 - Percentiles computed **per latitude**, aggregating over time **and longitude**; then area-weighted
   mean **20°S–20°N**. Land/ocean done separately. (Ext: 26 percentiles 0th–99th, spline-interpolated.)
+- **All days are pooled across the annual cycle — there is NO seasonal stratification anywhere in the
+  paper; the percentiles and the entire analysis are annual.** This is the gap (see §7).
 - **Byrne already checked gridpoint percentile computation** (aggregate over time only, then spatially
   average) and got similar results (Supplementary Fig 6) — so the *percentile diagnostic* is robust
   pointwise; what remains tropical-aggregate is the **theory's ocean coupling**.
@@ -108,9 +110,22 @@ set by baroclinic dynamics/advection; boundary layer can be stable/decoupled, es
 water-limited) and then advection + snow-melt (extratropical winter).
 
 ## 7. Implications for our extension
-- **Novelty, sharpened:** gridpoint *percentile* computation is already validated by Byrne. The new
-  contributions are (a) applying the **theory** (eqs 25/6) per gridpoint, and (b) extending **beyond
-  20°S–20°N**. Both hinge on the ocean/free-troposphere reference.
+- **The novel axis is SEASONALITY, not gridpoint (corrected 2026-06-21 per Osamu).** Byrne pools all
+  days (annual percentiles) and never stratifies by season, so the theory is tested only against
+  annual-aggregate amplification. Whether it explains the **seasonal cycle** of amplified hot-day
+  warming — this project's central phenomenon and title — is untested. Plan: apply the theory
+  season-by-season (or month-by-month) and ask whether it reproduces the simulated seasonal cycle of
+  `ΔδT`. (Byrne already validated gridpoint *percentile* computation, so gridpoint is the natural
+  resolution, not the contribution.)
+- **The convective + WTG assumption is itself seasonal.** A monsoon/subtropical cell is convectively
+  coupled in its wet/warm season and decoupled (subsident/baroclinic/stable BL) in the cold season, so
+  the seasonal test reveals *when* the thermodynamic engine is active. The seasons/regions where it
+  fails are where Layer 1 (SEB) and Layer 2 (advection + snow) attach — the breakdown maps onto the
+  project's actual axis (season).
+- **Head start:** the project's `se='sc'` pipeline is already month-resolved (`rg.p.cond.py` →
+  month×percentile×gpi land composites; `rg.p.py` → monthly `tas` thresholds), so the **land** inputs
+  (`T_L^x`, `q_L^x` by month) largely exist. Missing: month-resolved **ocean / free-troposphere**
+  reference and the MSE-percentile matching.
 - **Gridpoint application needs a free-troposphere reference per land point.** In the deep tropics
   (WTG) that reference is the tropical-mean (or zonal) ocean — Byrne's `δh_O(p^x)`. The clean
   generalization is to replace the *ocean MSE* proxy with the **local free-tropospheric temperature
